@@ -13,12 +13,15 @@ class User(db.Model):
     lastname = db.Column(db.String(64), index=True)
     firstname = db.Column(db.String(64), index=True)
     email = db.Column(db.String(128), unique=True)
-    phone = db.Column(db.String)
+    phone = db.Column(db.String(20))
     password_hash = db.Column(db.String(128))
+    # Colonne type qui permettra de faire le lien entre les différentes tables
+    type = db.Column(db.String(50))
 
+    # Argument permettant de paramétrer les tables polymorphiques
     __mapper_args__ = {
-        'polymorphic_identity': 'user',
-        'polymorphic_on': type
+        'polymorphic_on': type,
+        'polymorphic_identity': 'user'
     }
 
     def __repr__(self):
@@ -37,7 +40,9 @@ class User(db.Model):
 
 class Admin(User):
     __tablename__ = 'admin'
-    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key = True)
+
+    # Argument permettant de paramétrer les tables polymorphiques
     __mapper_args__ = {
         'polymorphic_identity': 'admin'
     }
@@ -45,10 +50,12 @@ class Admin(User):
 
 class Manager(User):
     __tablename__ = 'manager'
-    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key = True)
     mle = db.Column(db.Integer)
     registation = db.Column(db.String)
     entry_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Argument permettant de paramétrer les tables polymorphiques
     __mapper_args__ = {
         'polymorphic_identity': 'manager'
     }
@@ -56,16 +63,15 @@ class Manager(User):
 
 class Client(User):
     __tablename__ = 'client'
-    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key = True)
     nb_street = db.Column(db.String)
     street = db.Column(db.String)
     city = db.Column(db.String)
     zip = db.Column(db.Integer)
     nb_child = db.Column(db.Integer)
     marital_status = db.Column(db.String)
+
+    # Argument permettant de paramétrer les tables polymorphiques
     __mapper_args__ = {
         'polymorphic_identity': 'client'
     }
-
-
-
