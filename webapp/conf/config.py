@@ -11,7 +11,7 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = environ.get("DATABASE_URL") or \
         "sqlite:///" + SQLALCHEMY_DATABASE_FILE
 
-    SQLALCHEMY_TRACK_MODIFICATION = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     SQLALCHEMY_ENGINE_OPTIONS = {
         "poolclass": SingletonThreadPool,
