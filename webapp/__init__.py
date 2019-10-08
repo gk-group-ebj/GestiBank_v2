@@ -1,6 +1,6 @@
 from flask import Flask
 
-from webapp.bdd.models.model_users import User
+from webapp.bdd.models.model_users import User, Admin, Manager, Client
 from webapp.extensions import db, migrate
 from webapp.conf.config import Config
 
@@ -17,6 +17,6 @@ def create_app(p_config=Config):
 
         @app_return.shell_context_processor
         def inject_conf_var():
-            return {'db': db, 'User': User}
+            return {'db': db, 'User': User, "Admin": Admin, "Manager": Manager, "Client": Client }
 
     return app_return
