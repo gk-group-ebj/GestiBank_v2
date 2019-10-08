@@ -4,7 +4,7 @@ from datetime import datetime
 from enum import Enum
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from webapp.bdd.models import ACCOUNT_THRESHOLD, BANK_THRESHOLD, PAID_RATE, AGIOS_RATE
+from webapp.bdd.models import BANK_THRESHOLD, PAID_RATE, AGIOS_RATE
 from webapp.extensions import db
 
 
@@ -24,9 +24,8 @@ class Account(db.Model):
                      server_default=typeAccount.CURRENT_ACCOUNT.name)  # Enum typeAccount
     creation_date = db.Column(db.DateTime, default=datetime.utcnow)  # Varchar(20)
     iban = db.Column(db.String(20), unique=True)  # Varchar(20)
-    _balance = db.Column("balance", db.Float(12, 2), default=0)  # Varchar(20)
-
-    account_threshold = ACCOUNT_THRESHOLD
+    balance = db.Column(db.Float(12, 2), default=0)
+    _cashier_facility = db.Column("cashier_facility ", db.Float(12, 2), default=0)
 
     __mapper_args__ = {
         'polymorphic_identity': 'account',
@@ -36,40 +35,48 @@ class Account(db.Model):
     def __init__(self, **kwargs):
         super(Account, self).__init__(**kwargs)
         self.balance = 0.0
+        self.cashier_facility = 0.0
         self.creation_date = datetime.utcnow
         self.type = typeAccount.CURRENT_ACCOUNT
 
     @hybrid_property
-    def balance(self):
-        return self._balance
+    def cashier_facility(self):
+        return self._cashier_facility
 
-    @balance.setter
-    def balance(self, p_balance):
-        try:
-            if float(p_balance) >= self.account_threshold:
-                self._balance = float(p_balance)
-            else:
-                raise NegativeBalanceException(
-                    "FAILED : entrez un montant positif".format(self.account_number)
-                )
-        except Exception as e:
-            raise e
+    @cashier_facility.setter
+    def cashier_facility(self, p_cashier):
+        if p_cashier >= 0.0:
+            self.cashier_facility = float(p_cashier)
+        else:
+            raise NegativeCashierFacilityException(
+                "FAILED: le montant de découvert autorisé pour le compte {} est négatif ".format(self.account_number)
+            )
 
     # Methods
     def credit(self, p_count):
-        self.balance = self.balance + float(p_count)
+        if p_count >= 0.0:
+            self.balance = self.balance + float(p_count)
+        else:
+            raise NegativeOperationException(
+                "FAILED: le montant de l'opération sur le compte {} est négatif".format(self.account_number)
+            )
 
     def debit(self, p_count):
-        try:
-            new_balance = self.balance - float(p_count)
-            if new_balance >= 0.0:
-                self.balance = new_balance
-            else:
-                raise NegativeBalanceException(
-                    "FAILED : le solde du compte {} est négatif.".format(self.account_number)
+        if p_count >= 0.0:
+            try:
+                new_balance = (self.balance + self.cashier_facility) - float(p_count)
+                if new_balance >= 0.0:
+                    self.balance = new_balance - self.cashier_facility
+                else:
+                    raise NegativeBalanceException(
+                        "FAILED : le seuil de découvert du compte {} est dépassé.".format(self.account_number)
                     )
-        except Exception as e:
-            raise e
+            except Exception as e:
+                raise e
+        else:
+            raise NegativeOperationException(
+                "FAILED: le montant impliqué dans l'opération sur le compte {} est négatif".format(self.account_number)
+            )
 
     def __add__(self, p_count):
         return self.credit(p_count)
@@ -122,27 +129,76 @@ class DebitAccount(Account):
 
     __agios_rate = AGIOS_RATE
 
-    cashier_facility = db.Column(db.Boolean, default=False)  # BoleanÒ
-
     def __init__(self):
         super(DebitAccount, self).__init__()
         self.type = typeAccount.DEBIT_ACCOUNT
-        self.cashier_facility = False
-        self.agios = dict()
+        ##self.agios = dict()
+        self.agios = {
+            datetime.utcnow().strftime("%d-%m-%Y"): 0.0
+        }
 
-    def debit(self, p_count):
-        try:
-            new_balance = (self.balance + self.cashier_facility) - float(p_count)
+    def agios(self, p_key_strdate, p_val_newbalance):
+        if self.agios.get(p_key_strdate):
+            self.agios.update(p_key_strdate, p_val_newbalance)
+        else:
+            self.agios[p_key_strdate] = p_val_newbalance
+
+    # TODO How to debit agios on balance
+    def debitagios(self, p_count):
+        self.balance = self.balance - X
+
+    # TODO a finir
+    def credit(self, p_count):
+        if p_count >= 0.0:
+            new_balance = (self.balance + self.cashier_facility) + float(p_count)
+            self.balance = new_balance - self.cashier_facility
             if new_balance >= 0.0:
-                self.balance = new_balance - self.cashier_facility
+                self.agios(p_key_strdate, 0.0)
             else:
-                raise NegativeBalanceException(
-                    "FAILED : le decouvert autorisé pour le compte {} est atteint.".format(self.account_number)
-                    )
-        except Exception as e:
-            raise e
+                daily_agios = -1 * new_balance
+                self.agios(p_key_strdate, daily_agios)
 
+        else:
+            raise NegativeOperationException(
+                "FAILED: le montant impliqué dans l'opération sur le compte {} est négatif".format(self.account_number)
+            )
+
+    # TODO a finir
+    def debit(self, p_count):
+        if p_count >= 0.0:
+            new_balance = (self.balance + self.cashier_facility) - float(p_count)
+            self.balance = new_balance - self.cashier_facility
+            if new_balance >= 0.0:
+                self.agios(p_key_strdate, 0.0)
+            else:
+                daily_agios = -1 * new_balance
+                self.agios(p_key_strdate, daily_agios)
+        else:
+            raise NegativeOperationException(
+                "FAILED: le montant impliqué dans l'opération sur le compte {} est négatif".format(self.account_number)
+            )
 
 class NegativeBalanceException(Exception):
     def __init__(self, p_message):
         self.__message = p_message
+
+
+class NegativeOperationException(Exception):
+    def __init__(self, p_message):
+        self.__message = p_message
+
+
+class NegativeCashierFacilityException(Exception):
+    def __init__(self, p_message):
+        self.__message = p_message
+
+
+if __name__ == "main":
+    # Context
+    # DebitAccount avec cash_facility = 400
+        # 01/01 solde = 0, aucune opération
+        # 02/01 debit de 200 ==> solde = -200 et new_balance = 200
+        # 03/01 debit de 300 ==> solde = -500 et new_balance = -100 ==> agios[03/01] = 100    (créer en débit)
+        # 03/01 debit de 100 ==> solde = -600 et new_balance = -200 ==> agios[03/01] = 200    (écraser en débit)
+        # 04/01 credit de 100 ==> solde = -500 et new_balance = -100 ==> agios[04/01] = 100    (créer en crédit)
+        # 04/01 credit de 200 ==> solde = -300 et new_balance = +100 ==> agios[04/01] = 0      (écraser en credit à 0 car new_balance >= 0)
