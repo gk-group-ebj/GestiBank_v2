@@ -1,3 +1,5 @@
+from webapp.bdd.models import model_users
+
 # APPLICATION CONFIG
 # PAID ACCOUNT
 PAID_RATE = 18.0
@@ -5,3 +7,4 @@ BANK_THRESHOLD = 1000.0
 
 # DEBIT ACCOUNT
 AGIOS_RATE = 0.18
+

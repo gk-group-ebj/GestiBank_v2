@@ -5,7 +5,7 @@ from sqlalchemy.pool import SingletonThreadPool
 
 class Config(object):
     BASEDIR = path.abspath(path.dirname(__file__))
-    SECRET_KEY = "Thisissupposedtobesecret!"
+    SECRET_KEY = environ.get('SECRET_KEY') or 'you-will-never-guess'
 
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'root'

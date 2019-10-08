@@ -202,3 +202,5 @@ if __name__ == "main":
         # 03/01 debit de 100 ==> solde = -600 et new_balance = -200 ==> agios[03/01] = 200    (écraser en débit)
         # 04/01 credit de 100 ==> solde = -500 et new_balance = -100 ==> agios[04/01] = 100    (créer en crédit)
         # 04/01 credit de 200 ==> solde = -300 et new_balance = +100 ==> agios[04/01] = 0      (écraser en credit à 0 car new_balance >= 0)
+
+    pass
