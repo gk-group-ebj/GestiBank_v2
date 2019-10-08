@@ -4,8 +4,9 @@ from webapp.bdd.models.model_users import User, Admin, Manager, Client
 from webapp.extensions import db, migrate, babel
 from webapp.conf.config import Config
 
-from webapp.auth import bp as main_bp
+
 from webapp.auth import bp as auth_bp
+from webapp.main import bp as main_bp
 
 
 def create_app(p_config=Config):
