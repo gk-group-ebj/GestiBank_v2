@@ -1,9 +1,11 @@
 from os import path, environ
+import os
 
 from sqlalchemy.pool import SingletonThreadPool
 
 
 class Config(object):
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     BASEDIR = path.abspath(path.dirname(__file__))
 
     SQLALCHEMY_DATABASE_FILE = path.realpath(path.join(BASEDIR, "..", "bdd", "gestibank.db"))
