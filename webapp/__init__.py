@@ -1,8 +1,9 @@
 from flask import Flask
 
-from webapp.bdd.models.account import Account, PaidAccount, DebitAccount
 from webapp.extensions import db, migrate
 from webapp.conf.config import Config
+
+from webapp.main import bp as main_bp
 
 
 def create_app(p_config=Config):
@@ -15,8 +16,6 @@ def create_app(p_config=Config):
         db.init_app(app_return)
         migrate.init_app(app_return, db)
 
-        @app_return.shell_context_processor
-        def inject_conf_var():
-            return {'db': db, "Account": Account, "PaidAccount": PaidAccount, "DebitAccount": DebitAccount}
+        app_return.register_blueprint(main_bp)
 
     return app_return

@@ -1,3 +1,4 @@
 FLASK_APP=gestibank.py
 FLASK_ENV=dev
 FLASK_DEBUG=1
+DB=MYSQL
