@@ -25,7 +25,7 @@ class Account(db.Model):
     creation_date = db.Column(db.DateTime, default=datetime.utcnow)  # Varchar(20)
     iban = db.Column(db.String(20), unique=True)  # Varchar(20)
     balance = db.Column(db.Float(12, 2), default=0)
-    _cashier_facility = db.Column("cashier_facility ", db.Float(12, 2), default=0)
+    _cashier_facility = db.Column("cashier_facility", db.Float(12, 2), default=0)
 
     __mapper_args__ = {
         'polymorphic_identity': 'account',

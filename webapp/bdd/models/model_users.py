@@ -97,12 +97,12 @@ class Client(User):
     client_id = db.Column(db.Integer, primary_key=True, unique=True)
     manager_id = db.Column(db.Integer, db.ForeignKey('manager.manager_id'))  # One Manager to many Clients
 
-    nb_street = db.Column(db.String)
-    street = db.Column(db.String)
-    city = db.Column(db.String)
-    zip = db.Column(db.Integer)
+    nb_street = db.Column(db.String(10))
+    street = db.Column(db.String(250))
+    city = db.Column(db.String(120))
+    zip = db.Column(db.String(60))
     nb_child = db.Column(db.Integer)
-    marital_status = db.Column(db.String)
+    marital_status = db.Column(db.String(20))
 
     def __init__(self):
         self.client_id = self.id
