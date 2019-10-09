@@ -1,6 +1,7 @@
 from flask import Flask
 
-from webapp.bdd.models.model_users import User, Admin, Manager, Client
+from webapp.bdd.models.accounts import Account, PaidAccount, DebitAccount
+from webapp.bdd.models.users import User, Admin, Manager, Client
 from webapp.extensions import db, migrate, babel
 from webapp.conf.config import Config
 
@@ -24,9 +25,11 @@ def create_app(p_config=Config):
         app_return.register_blueprint(main_bp)
         app_return.register_blueprint(auth_bp)
 
-
         @app_return.shell_context_processor
         def inject_conf_var():
-            return {'db': db, 'User': User, "Admin": Admin, "Manager": Manager, "Client": Client }
+            return {'db': db,
+                    'User': User, "Admin": Admin, "Manager": Manager, "Client": Client,
+                    "Account": Account, "PaidAccount": PaidAccount, "DebitAccount": DebitAccount
+                    }
 
     return app_return
