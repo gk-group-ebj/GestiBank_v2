@@ -11,7 +11,7 @@ from webapp.extensions import db
 # Compte courant sans autorisation de découvert
 class typeAccount(Enum):
     CURRENT_ACCOUNT = "Compte Courant"
-    DEBIT_ACCOUNT = "Comte Autorisation de découvert"
+    DEBIT_ACCOUNT = "Compte Autorisation de découvert"
     PAID_ACCOUNT = "Compte Rémunéré"
 
 
@@ -26,6 +26,7 @@ class Account(db.Model):
     iban = db.Column(db.String(20), unique=True)  # Varchar(20)
     balance = db.Column(db.Float(12, 2), default=0)
     _cashier_facility = db.Column("cashier_facility", db.Float(12, 2), default=0)
+    _paid_threshold = db.Column("paid_threshold", db.Float(12, 2), default=0)
 
     __mapper_args__ = {
         'polymorphic_identity': 'account',
@@ -36,7 +37,8 @@ class Account(db.Model):
         super(Account, self).__init__(**kwargs)
         self.balance = 0.0
         self.cashier_facility = 0.0
-        self.creation_date = datetime.utcnow
+        self.paid_threshold = 0.0
+        self.creation_date = datetime.utcnow()
         self.type = typeAccount.CURRENT_ACCOUNT
 
     @hybrid_property
@@ -51,6 +53,20 @@ class Account(db.Model):
             raise NegativeCashierFacilityException(
                 "FAILED: le montant de découvert autorisé pour le compte {} est négatif ".format(self.account_number)
             )
+
+    @hybrid_property
+    def paid_threshold(self):
+        return self._paid_threshold
+
+    @paid_threshold.setter
+    def paid_threshold(self, p_paid):
+        if p_paid >= 0.0:
+            self.paid_threshold = float(p_paid)
+        else:
+            raise NegativePaidThresholdException(
+                "FAILED: le seuil de rémunération pour le compte {} est négatif ".format(self.account_number)
+            )
+
 
     # Methods
     def credit(self, p_count):
@@ -115,7 +131,7 @@ class PaidAccount(Account):
     benefit = db.Column(db.Float(12, 2), default=0)  # Varchar(20)
 
     def __init__(self, **kwargs):
-        super(PaidAccount, self).__init__()
+        super(PaidAccount, self).__init__(**kwargs)
         self.type = typeAccount.PAID_ACCOUNT
         self.benefit = 0.0
 
@@ -129,8 +145,8 @@ class DebitAccount(Account):
 
     __agios_rate = AGIOS_RATE
 
-    def __init__(self):
-        super(DebitAccount, self).__init__()
+    def __init__(self, **kwargs):
+        super(DebitAccount, self).__init__(**kwargs)
         self.type = typeAccount.DEBIT_ACCOUNT
         ##self.agios = dict()
         self.agios = {
@@ -193,7 +209,12 @@ class NegativeCashierFacilityException(Exception):
         self.__message = p_message
 
 
-if __name__ == "main":
+class NegativePaidThresholdException(Exception):
+    def __init__(self, p_message):
+        self.__message = p_message
+
+
+if __name__ == "__main__":
     # Context
     # DebitAccount avec cash_facility = 400
         # 01/01 solde = 0, aucune opération
