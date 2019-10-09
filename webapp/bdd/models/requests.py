@@ -15,15 +15,14 @@ class OpenAccountRequest(db.Model, PaginatedAPIMixin):
     # type = db.Column(db.String(20))
     request_data = db.Column(db.Text())
 
+    def __init__(self, **kwargs):
+        super(OpenAccountRequest, self).__init__(**kwargs)
+        self.request_date = datetime.utcnow
+
     def __str__(self):
-        if self.balance >= self.account_threshold:
-            return "<Account[{}:{}:{:+.2f}]>".format(self.account_number,
-                                                     self.type.value,
-                                                     self.balance)
-        else:
-            return "<Account[{}:{}:{:-.2f}]>".format(self.account_number,
-                                                     self.type.value,
-                                                     self.balance)
+        return "<Request[{}:{}:{:+.2f}]>".format(self.id,
+                                                 self.request_date.strftime("%d-%m-%Y"),
+                                                 self.balance)
 
     def __repr__(self):
         return self.__str__()
