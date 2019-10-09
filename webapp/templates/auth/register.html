@@ -1,28 +1,11 @@
-{% extends "barre_manager.html" %}
+{% extends "barre.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block content %}
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.mle.label}}<br>
-            {{ form.mle(size=32)}}
-        </p>
-        <p>
-            {{ form.lastname.label}}<br>
-            {{ form.lastname(size=32)}}
-        </p>
-        <p>
-            {{ form.firstname.label}}<br>
-            {{ form.firstname(size=32)}}
-        </p>
-        <p>
-            {{ form.email.label}}<br>
-            {{ form.email(size=32)}}
-        </p>
-        <p>
-            {{ form.phone.label}}<br>
-            {{ form.phone(size=32)}}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
+{% block app_content %}
+    <h1>Register</h1>
+    <div class="row">
+        <div class="col-md-4">
+            {{ wtf.quick_form(form) }}
+        </div>
+    </div>
 {% endblock %}

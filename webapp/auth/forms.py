@@ -17,11 +17,12 @@ class LoginForm(FlaskForm):
 """ formulaire de creation d'un manager par l'admin """
 
 class RegistrationForm(FlaskForm):
+    mle = StringField(_l('Matricule'), validators=[DataRequired()])
     lastname = StringField(_l('Lastname'), validators=[DataRequired()])
     firstname = StringField(_l('Firstname'), validators=[DataRequired()])
     username = StringField(_l('Username'), validators=[DataRequired()])
     phone = StringField(_l('Phone'), validators=[DataRequired()])
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
-    mle = StringField(_l('Matricule'), validators=[DataRequired()])
+
 
     submit = SubmitField(_l('Register'))

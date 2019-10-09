@@ -21,3 +21,9 @@ def get_request_open_account_all():
 @bp.route('/request/open_account', methods=['POST'])
 def create_request_open_account():
     pass
+
+
+# route affichage clients
+@bp.route('/')
+def clients():
+    pass
