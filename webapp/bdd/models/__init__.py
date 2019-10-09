@@ -1,4 +1,4 @@
-from webapp.bdd.models import model_users
+from webapp.bdd.models import users
 
 # APPLICATION CONFIG
 # PAID ACCOUNT

@@ -2,9 +2,12 @@
 
 from datetime import datetime
 from enum import Enum
+
+from flask import url_for
 from sqlalchemy.ext.hybrid import hybrid_property
 
 from webapp.bdd.models import BANK_THRESHOLD, PAID_RATE, AGIOS_RATE
+from webapp.bdd.models.utils import PaginatedAPIMixin
 from webapp.extensions import db
 
 
@@ -15,14 +18,14 @@ class typeAccount(Enum):
     PAID_ACCOUNT = "Compte Rémunéré"
 
 
-class Account(db.Model):
+class Account(db.Model, PaginatedAPIMixin):
     __tablename__: "account"
 
     id = db.Column(db.Integer, primary_key=True)  # Integer
     account_number = db.Column(db.Integer, nullable=False, index=True, unique=True)  # Varchar(40)
     type = db.Column(db.Enum(typeAccount), nullable=False,
                      server_default=typeAccount.CURRENT_ACCOUNT.name)  # Enum typeAccount
-    creation_date = db.Column(db.DateTime, default=datetime.utcnow)  # Varchar(20)
+    creation_date = db.Column(db.DateTime, default=datetime.utcnow)  # Datetime(20)
     iban = db.Column(db.String(20), unique=True)  # Varchar(20)
     balance = db.Column(db.Float(12, 2), default=0)
     _cashier_facility = db.Column("cashier_facility", db.Float(12, 2), default=0)
@@ -100,6 +103,36 @@ class Account(db.Model):
 
     def __repr__(self):
         return self.__str__()
+
+    def to_dict(self, endpoint):
+        data = {
+            'id': self.id,
+            'account_number': self.account_number,
+            '_links': {
+                'self': url_for(endpoint, id=self.id)
+            }
+        }
+        return data
+
+    @staticmethod
+    def from_dict(cls, data, p_object=None):
+        if data.json:
+            data = data.json
+        elif data.args:
+            data = data.args
+        else:
+            return None
+
+        if p_object is not None:
+            my_object = p_object
+        else:
+            my_object = Account()
+
+        my_attr_dict = dict(Account)
+
+        for field in my_attr_dict:
+            if field in data:
+                setattr(my_object, field, data[field])
 
 
 class PaidAccount(Account):
