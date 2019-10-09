@@ -4,14 +4,16 @@
         <meta charset="utf-8">
         <title>Gestibank</title>
         <!-- Avec flask pour utiliser href il faut utiliser la fonction url_for -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     </head>
     <body>
         <header>
             <nav>
                 <ul>
-                    <li><a href="{{ url_for('manager.index') }}">{{_('My homepage')}}</a></li>
-                    <li><a href="{{ url_for('manager.clients')}}">{{_('Clients')}}</a></li>
+                    <li><a href="{{ url_for('main.index_manager') }}">{{_('My homepage')}}</a></li>
+                    <!--route à faire dans api pour afficher les clients
+                    <li><a href="{{ url_for('api.clients')}}">{{_('Clients')}}</a></li>
+                    -->
                     <li>
                         <a href="{{url_for('auth.logout')}}">{{_('Logout')}}</a>
                     </li>

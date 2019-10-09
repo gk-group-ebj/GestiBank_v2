@@ -8,6 +8,7 @@ from webapp.conf.config import Config
 
 from webapp.auth import bp as auth_bp
 from webapp.main import bp as main_bp
+from webapp.api import bp as api_bp
 
 
 def create_app(p_config=Config):
@@ -22,8 +23,9 @@ def create_app(p_config=Config):
 
         babel.init_app(app_return)
 
-        app_return.register_blueprint(main_bp)
         app_return.register_blueprint(auth_bp)
+        app_return.register_blueprint(main_bp)
+        app_return.register_blueprint(api_bp)
 
         @app_return.shell_context_processor
         def inject_conf_var():

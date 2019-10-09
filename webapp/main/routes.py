@@ -8,6 +8,20 @@ from flask_login import current_user
 def index():
     return render_template('main/index.html')
 
+@bp.route('/manager/')
+def index_manager():
+    return render_template('manager/index.html')
+
+@bp.route('/')
+@bp.route('/admin/index')
+def index_admin():
+    return render_template('admin/index.html')
+
 @bp.route('/event')
 def event():
     return render_template('main/event.html')
+
+    @bp.route('/')
+    @bp.route('/index')
+    def index():
+       return render_template('main/index.html')

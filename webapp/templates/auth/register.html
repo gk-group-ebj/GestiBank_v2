@@ -1,8 +1,12 @@
-{% extends "barre.html" %}
+{% extends "barre_manager.html" %}
 
 {% block content %}
     <form action="" method="post">
         {{ form.hidden_tag() }}
+        <p>
+            {{ form.mle.label}}<br>
+            {{ form.mle(size=32)}}
+        </p>
         <p>
             {{ form.lastname.label}}<br>
             {{ form.lastname(size=32)}}
@@ -18,34 +22,6 @@
         <p>
             {{ form.phone.label}}<br>
             {{ form.phone(size=32)}}
-        </p>
-        <h2>Adresse</h2>
-        <p>
-            {{ form.nb_street.label}}<br>
-            {{ form.nb_street(size=32)}}
-        </p>
-        <p>
-            {{ form.street.label}}<br>
-            {{ form.street(size=32)}}
-        </p>
-        <p>
-            {{ form.zip.label}}<br>
-            {{ form.zip(size=32)}}
-        </p>
-        <p>
-            {{ form.city.label}}<br>
-            {{ form.city(size=32)}}
-        </p>
-        <h2>{{ form.marital_statue.label}}<br></h2>
-        {% for subfield in form.marital_statue %}
-            <ul>
-                <li>{{ subfield.label }}</li>
-                <li>{{ subfield }}</li>
-            </ul>
-        {% endfor %}
-        <p>
-            {{ form.nb_child.label}}<br>
-            {{ form.nb_child(size=32)}}
         </p>
         <p>{{ form.submit() }}</p>
     </form>

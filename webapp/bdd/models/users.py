@@ -134,6 +134,7 @@ class Manager(User):
     def __init__(self, **kwargs):
         super(Manager, self).__init__(**kwargs)
         self.manager_id = self.id
+        self.entry_date = datetime.utcnow()
 
     def __repr__(self):
         return "<Manager : {}>".format(self.lastname)
