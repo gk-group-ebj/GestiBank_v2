@@ -1,7 +1,8 @@
 {% extends 'bootstrap/base.html' %}
 {% block styles %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    {{super()}}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main_style.css') }}" />
+
 {% endblock %}
 {% block navbar %}
     <header>
