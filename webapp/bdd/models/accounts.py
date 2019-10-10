@@ -22,6 +22,7 @@ class Account(db.Model, PaginatedAPIMixin):
 
     id = db.Column(db.Integer, primary_key=True)  # Integer
     account_number = db.Column(db.Integer, nullable=False, index=True, unique=True)  # Varchar(40)
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'), index=True)
     type = db.Column(db.Enum(typeAccount), nullable=False,
                      server_default=typeAccount.CURRENT_ACCOUNT.name)  # Enum typeAccount
     creation_date = db.Column(db.DateTime, default=datetime.utcnow())  # Datetime(20)
