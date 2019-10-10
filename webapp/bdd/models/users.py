@@ -4,13 +4,14 @@ import jwt
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 from time import time
 
 from webapp.bdd.models.utils import PaginatedAPIMixin, same_as
-from webapp.extensions import db
+from webapp.extensions import db, login
 
 
-class User(db.Model, PaginatedAPIMixin):
+class User(db.Model, PaginatedAPIMixin, UserMixin):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -42,7 +43,7 @@ class User(db.Model, PaginatedAPIMixin):
 
     def checkpass(self, password):
         if self.password_hash is not None:
-            return check_password_hash(self.password, password)
+            return check_password_hash(self.password_hash, password)
         return False
 
     def get_reset_password_token(self, expires_in=600):
@@ -166,3 +167,7 @@ class Client(User):
 
     def __repr__(self):
         return "<Client : {}>".format(self.lastname)
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))

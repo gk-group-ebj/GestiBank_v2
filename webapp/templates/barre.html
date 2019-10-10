@@ -7,12 +7,22 @@
 {% block navbar %}
     <header>
             <nav>
-                <ul >
-                    <li><a href="{{ url_for('main.index') }}">{{_('Home')}}</a></li>
+                <ul>
+                    {% if current_user.type == "client" %}
+                        <li>
+                            <a href="{{ url_for('main.index_client') }}">{{_('Index')}}</a>
+                        </li>
+                    {% else %}
+                        <li><a href="{{ url_for('main.index') }}">{{_('Home')}}</a></li>
+                    {% endif %}
                     <li><a href="{{ url_for('main.event')}}">{{_('Event')}}</a></li>
                     <li><a href="{{ url_for('auth.register')}}">{{_('Registration')}}</a></li>
                     <li>
-                        <a href="{{url_for('auth.login')}}">{{_('Login')}}</a>
+                        {% if current_user.is_anonymous %}
+                            <a href="{{url_for('auth.login')}}">{{_('Login')}}</a>
+                        {% else %}
+                            <a href="{{ url_for('auth.logout') }}">{{_('Logout')}}</a>
+                        {% endif %}
                     </li>
                     <li>
                         <a href="{{url_for('auth.reset_password_request')}}">
@@ -40,4 +50,3 @@
             {% block app_content %}{% endblock%}
         </section>
 {% endblock%}
-
