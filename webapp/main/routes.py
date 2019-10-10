@@ -17,6 +17,11 @@ def index_manager():
 def index_admin():
     return render_template('admin/index.html')
 
+@bp.route('/client/')
+@bp.route('/client/index')
+def index_client():
+    return render_template('client/index.html')
+
 @bp.route('/event')
 def event():
     return render_template('main/event.html')
