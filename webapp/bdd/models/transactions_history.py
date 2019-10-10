@@ -16,6 +16,7 @@ class typeTransaction(Enum):
 
 class TransactionHistory(db.Model):
     __tablename__: "transaction_history"
+    __table_args__= {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)  # Integer
     operation_date = db.Column(db.DateTime, default=datetime.utcnow(), index=True)  # Varchar(20)
@@ -27,14 +28,19 @@ class TransactionHistory(db.Model):
 
     def __init__(self, **kwargs):
         super(TransactionHistory, self).__init__(**kwargs)
-        self.operation_date = datetime.utcnow()
-        self.type = None
-        self.balance_attime = 0.0
-        self.operation_amount = 0.0
+        if self.operation_date is None:
+           self.operation_date = datetime.utcnow()
+
+        if self.type is None:
+            self.type = None
+        if self.balance_attime is None:
+            self.balance_attime = 0.0
+        if self.operation_amount is None:
+            self.operation_amount = 0.0
 
     def __str__(self):
         return "<{}}[{} : {} : {} : {} : {} : {}]>" \
-            .format(self.__class__.name,
+            .format(self.__class__.__name__,
                     self.id,
                     self.account_id,
                     self.operation_date.strftime("%d-%m-%Y"),

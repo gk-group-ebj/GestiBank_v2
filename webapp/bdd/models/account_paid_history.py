@@ -7,6 +7,7 @@ from webapp.extensions import db
 
 class PaidAccountBenefitHistory(db.Model):
     __tablename__: "paid_account_benefit_history"
+    __table_args__= {'extend_existing': True}
 
     __paid_rate = PAID_RATE
     __paid_THRESHOLD = PAID_THRESHOLD
@@ -20,14 +21,18 @@ class PaidAccountBenefitHistory(db.Model):
 
     def __init__(self, **kwargs):
         super(PaidAccountBenefitHistory, self).__init__(**kwargs)
-        self.paid_check_date = datetime.utcnow()
-        self.balance_daily = 0.0
-        self.paid_threshold_attime = 0.0
-        self.daily_paid = 0.0
+        if self.paid_check_date is None:
+            self.paid_check_date = datetime.utcnow()
+        if self.balance_daily is None:
+            self.balance_daily = 0.0
+        if self.paid_threshold_attime:
+            self.paid_threshold_attime = 0.0
+        if self.daily_paid is None:
+            self.daily_paid = 0.0
 
     def __str__(self):
         return "<{}}[{} : {} : {} : {} : {} : {}]>" \
-            .format(self.__class__.name,
+            .format(self.__class__.__name__,
                     self.id,
                     self.account_id,
                     self.paid_check_date.strftime("%d-%m-%Y"),

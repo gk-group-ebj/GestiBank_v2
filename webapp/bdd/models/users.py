@@ -13,6 +13,7 @@ from webapp.extensions import db, login
 
 class User(db.Model, PaginatedAPIMixin, UserMixin):
     __tablename__ = 'user'
+    __table_args__= {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
     lastname = db.Column(db.String(64), index=True)
@@ -94,6 +95,7 @@ class User(db.Model, PaginatedAPIMixin, UserMixin):
 
 class Admin(User):
     __tablename__ = 'admin'
+    __table_args__= {'extend_existing': True}
 
     # Argument permettant de parametrer les tables polymorphiques
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
@@ -142,6 +144,7 @@ class Manager(User):
 
 class Client(User):
     __tablename__ = 'client'
+    __table_args__= {'extend_existing': True}
 
     # Argument permettant de parametrer les tables polymorphiques
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
@@ -167,6 +170,7 @@ class Client(User):
 
     def __repr__(self):
         return "<Client : {}>".format(self.lastname)
+
 
 @login.user_loader
 def load_user(id):
