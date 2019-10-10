@@ -14,7 +14,7 @@ class DebitAccountAgiosHistory(db.Model, PaginatedAPIMixin):
 
     id = db.Column(db.Integer, primary_key=True)  # Integer
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), index=True)
-    agios_check_date = db.Column(db.DateTime, default=datetime.utcnow, index=True)  # Varchar(20)
+    agios_check_date = db.Column(db.DateTime, default=datetime.utcnow(), index=True)  # Varchar(20)
     cashier_facility_attime = db.Column("cashier_facility", db.Float(12, 2), default=0)
     balance_daily = db.Column(db.Float(12, 2), default=0)
     daily_agios = db.Column(db.Float(12, 2), default=0)

@@ -18,7 +18,7 @@ class TransactionHistory(db.Model):
     __tablename__: "transaction_history"
 
     id = db.Column(db.Integer, primary_key=True)  # Integer
-    operation_date = db.Column(db.DateTime, default=datetime.utcnow, index=True)  # Varchar(20)
+    operation_date = db.Column(db.DateTime, default=datetime.utcnow(), index=True)  # Varchar(20)
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), index=True)
     type = db.Column(db.Enum(typeTransaction), nullable=False,
                      server_default=None)  # Enum typeAccount

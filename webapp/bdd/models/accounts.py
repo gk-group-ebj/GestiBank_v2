@@ -24,7 +24,7 @@ class Account(db.Model, PaginatedAPIMixin):
     account_number = db.Column(db.Integer, nullable=False, index=True, unique=True)  # Varchar(40)
     type = db.Column(db.Enum(typeAccount), nullable=False,
                      server_default=typeAccount.CURRENT_ACCOUNT.name)  # Enum typeAccount
-    creation_date = db.Column(db.DateTime, default=datetime.utcnow)  # Datetime(20)
+    creation_date = db.Column(db.DateTime, default=datetime.utcnow())  # Datetime(20)
     iban = db.Column(db.String(20), unique=True)  # Varchar(20)
     balance = db.Column(db.Float(12, 2), default=0)
     _cashier_facility = db.Column("cashier_facility", db.Float(12, 2), default=0)
