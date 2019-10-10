@@ -19,6 +19,7 @@ class typeAccount(Enum):
 
 class Account(db.Model, PaginatedAPIMixin):
     __tablename__: "account"
+    __table_args__= {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)  # Integer
     account_number = db.Column(db.Integer, nullable=False, index=True, unique=True)  # Varchar(40)
@@ -38,11 +39,19 @@ class Account(db.Model, PaginatedAPIMixin):
 
     def __init__(self, **kwargs):
         super(Account, self).__init__(**kwargs)
-        self.balance = 0.0
-        self.cashier_facility = 0.0
-        self.paid_threshold = 0.0
-        self.creation_date = datetime.utcnow()
         self.type = typeAccount.CURRENT_ACCOUNT
+
+        if self.creation_date is None:
+            self.creation_date = datetime.utcnow()
+
+        if self.balance is None:
+            self.balance = 0.0
+
+        if self._cashier_facility is None:
+            self._cashier_facility = 0.0
+
+        if self._paid_threshold is None:
+            self._paid_threshold = 0.0
 
     @hybrid_property
     def cashier_facility(self):
@@ -51,7 +60,7 @@ class Account(db.Model, PaginatedAPIMixin):
     @cashier_facility.setter
     def cashier_facility(self, p_cashier):
         if p_cashier >= 0.0:
-            self.cashier_facility = float(p_cashier)
+            self._cashier_facility = float(p_cashier)
         else:
             raise NegativeCashierFacilityException(
                 "FAILED: le montant de découvert autorisé pour le compte {} est négatif. "
@@ -65,7 +74,7 @@ class Account(db.Model, PaginatedAPIMixin):
     @paid_threshold.setter
     def paid_threshold(self, p_paid):
         if p_paid >= 0.0:
-            self.paid_threshold = float(p_paid)
+            self._paid_threshold = float(p_paid)
         else:
             raise NegativePaidThresholdException(
                 "FAILED: le seuil de rémunération pour le compte {} est négatif. Entrez un montant positif".format(
@@ -111,15 +120,19 @@ class Account(db.Model, PaginatedAPIMixin):
 
     def __str__(self):
         if self.balance >= 0.0:
-            return "<{}[{}:{}:{:+.2f}]>".format(self.__class__.name,
+            return "<{}[{}:{}:{:+.2f}:{}:{}]>".format(self.__class__.__name__,
                                                 self.account_number,
                                                 self.type.value,
-                                                self.balance)
+                                                self.balance,
+                                                self.cashier_facility,
+                                                self.paid_threshold)
         else:
-            return "<{}[{}:{}:{:-.2f}]>".format(self.__class__.name,
+            return "<{}[{}:{}:{:-.2f}:{}:{}]>".format(self.__class__.__name__,
                                                 self.account_number,
                                                 self.type.value,
-                                                self.balance)
+                                                self.balance,
+                                                self.cashier_facility,
+                                                self.paid_threshold)
 
     def __repr__(self):
         return self.__str__()
@@ -201,4 +214,4 @@ class NegativePaidThresholdException(Exception):
 
 
 if __name__ == "__main__":
-    pass
+    db.metadata.clear()
