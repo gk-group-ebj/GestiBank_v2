@@ -1,7 +1,6 @@
 from flask import render_template, request, flash, redirect, url_for
 from werkzeug.urls import url_parse
 
-from webapp import Admin
 from webapp.auth import bp
 from webapp.auth.forms import RegistrationForm, LoginForm
 from flask_babel import _
