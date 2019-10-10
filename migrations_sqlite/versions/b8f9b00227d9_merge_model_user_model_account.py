@@ -1,7 +1,7 @@
 """Merge model_user + model_account
 
 Revision ID: b8f9b00227d9
-Revises: 
+Revises:
 Create Date: 2019-10-08 17:16:14.900384
 
 """
@@ -25,7 +25,7 @@ def upgrade():
     sa.Column('creation_date', sa.DateTime(), nullable=True),
     sa.Column('iban', sa.String(length=20), nullable=True),
     sa.Column('balance', sa.Float(precision=12, asdecimal=2), nullable=True),
-    sa.Column('cashier_facility ', sa.Float(precision=12, asdecimal=2), nullable=True),
+    sa.Column('cashier_facility', sa.Float(precision=12, asdecimal=2), nullable=True),
     sa.Column('benefit', sa.Float(precision=12, asdecimal=2), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('iban')
