@@ -6,12 +6,13 @@ from webapp.bdd.models.accounts import Account, PaidAccount, DebitAccount
 from webapp.bdd.models.requests import OpenAccountRequest
 from webapp.bdd.models.transactions_history import TransactionHistory
 from webapp.bdd.models.users import User, Admin, Manager, Client
-from webapp.extensions import db, migrate, babel
+from webapp.extensions import db, migrate, babel, bootstrap
 from webapp.conf.config import Config
 
 
 from webapp.auth import bp as auth_bp
 from webapp.main import bp as main_bp
+from webapp.api import bp as api_bp
 
 
 def create_app(p_config=Config):
@@ -25,9 +26,12 @@ def create_app(p_config=Config):
         migrate.init_app(app_return, db)
 
         babel.init_app(app_return)
+        bootstrap.init_app(app_return)
 
-        app_return.register_blueprint(main_bp)
+
         app_return.register_blueprint(auth_bp)
+        app_return.register_blueprint(main_bp)
+        app_return.register_blueprint(api_bp)
 
         @app_return.shell_context_processor
         def inject_conf_var():

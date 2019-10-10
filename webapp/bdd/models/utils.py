@@ -46,3 +46,6 @@ class PaginatedAPIMixin(object):
     @staticmethod
     def count(p_req):
         return db.session.query(func.count(p_req))
+
+# Fonction same_as permet d'initialiser un default sur une colonne par rapport à une autre colonnes
+same_as = lambda col: lambda ctx: ctx.current_parameters.get(col)

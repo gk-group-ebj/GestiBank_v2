@@ -1,15 +1,12 @@
-<!DOCTYPE html>
-<html lang="fr" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <title>Gestibank</title>
-        <!-- Avec flask pour utiliser href il faut utiliser la fonction url_for -->
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    </head>
-    <body>
-        <header>
+{% extends 'bootstrap/base.html' %}
+{% block styles %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+{% endblock %}
+{% block navbar %}
+    <header>
             <nav>
-                <ul>
+                <ul >
                     <li><a href="{{ url_for('main.index') }}">{{_('Home')}}</a></li>
                     <li><a href="{{ url_for('main.event')}}">{{_('Event')}}</a></li>
                     <li><a href="{{ url_for('auth.register')}}">{{_('Registration')}}</a></li>
@@ -24,6 +21,8 @@
                 </ul>
             </nav>
         </header>
+{% endblock %}
+{% block content %}
         <section>
             <div class="errors_message">
                 {% with messages = get_flashed_messages() %}
@@ -37,7 +36,7 @@
                 {% endwith %}
             </div>
             <!-- Instanciation du block content qui pourra être réutilisé dans d'autres fichiers -->
-            {% block content %}{% endblock%}
+            {% block app_content %}{% endblock%}
         </section>
-    </body>
-</html>
+{% endblock%}
+

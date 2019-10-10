@@ -6,7 +6,7 @@ from sqlalchemy.orm import backref
 from werkzeug.security import generate_password_hash, check_password_hash
 from time import time
 
-from webapp.bdd.models.utils import PaginatedAPIMixin
+from webapp.bdd.models.utils import PaginatedAPIMixin, same_as
 from webapp.extensions import db
 
 
@@ -96,7 +96,6 @@ class Admin(User):
 
     # Argument permettant de parametrer les tables polymorphiques
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    admin_id = db.Column(db.Integer, primary_key=True, unique=True)
 
     __mapper_args__ = {
         'polymorphic_identity': 'admin',
@@ -116,7 +115,7 @@ class Manager(User):
 
     # Argument permettant de parametrer les tables polymorphiques
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    manager_id = db.Column(db.Integer, primary_key=True, unique=True)
+    manager_id = db.Column(db.Integer, primary_key=True, unique=True, default=same_as('id'))
     mle = db.Column(db.Integer)
     entry_date = db.Column(db.DateTime, default=datetime.utcnow)
     # One Manager to many Clients.
@@ -134,6 +133,7 @@ class Manager(User):
     def __init__(self, **kwargs):
         super(Manager, self).__init__(**kwargs)
         self.manager_id = self.id
+        self.entry_date = datetime.utcnow()
 
     def __repr__(self):
         return "<Manager : {}>".format(self.lastname)
@@ -144,7 +144,7 @@ class Client(User):
 
     # Argument permettant de parametrer les tables polymorphiques
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    client_id = db.Column(db.Integer, primary_key=True, unique=True)
+    client_id = db.Column(db.Integer, primary_key=True, unique=True, default=same_as('id'))
     # One Manager to many Clients
     manager_id = db.Column(db.Integer, db.ForeignKey('manager.manager_id'))
     nb_street = db.Column(db.String(10))
