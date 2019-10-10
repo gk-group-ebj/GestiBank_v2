@@ -16,7 +16,7 @@ def login():
     if form.validate_on_submit():
         if request.path == '/login/admin':
             return render_template('admin/index.html')
-    render_template("auth/login.html", title=_('Login'), form=form)
+    return render_template("auth/login.html", title=_('Login'), form=form)
 
 
 @bp.route('/register/manager', methods=['GET', 'POST'])

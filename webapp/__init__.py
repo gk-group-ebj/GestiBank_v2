@@ -1,7 +1,7 @@
 from flask import Flask
 
 from webapp.bdd.models.accounts import Account, PaidAccount, DebitAccount
-from webapp.bdd.models.users import User, Admin, Manager, Client
+from webapp.bdd.models.users import Base, Admin, Manager, Client, HasClients, ClientAssociation
 from webapp.extensions import db, migrate, babel
 from webapp.conf.config import Config
 
@@ -30,8 +30,9 @@ def create_app(p_config=Config):
         @app_return.shell_context_processor
         def inject_conf_var():
             return {'db': db,
-                    'User': User, "Admin": Admin, "Manager": Manager, "Client": Client,
-                    "Account": Account, "PaidAccount": PaidAccount, "DebitAccount": DebitAccount
+                    'Base': Base, "Admin": Admin, "Manager": Manager, "Client": Client,
+                    "Account": Account, "PaidAccount": PaidAccount, "DebitAccount": DebitAccount,
+                    "HasClients": HasClients, "ClientAssociation": ClientAssociation
                     }
 
     return app_return
