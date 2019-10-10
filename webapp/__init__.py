@@ -1,6 +1,10 @@
 from flask import Flask
 
+from webapp.bdd.models.account_agios_history import DebitAccountAgiosHistory
+from webapp.bdd.models.account_paid_history import PaidAccountBenefitHistory
 from webapp.bdd.models.accounts import Account, PaidAccount, DebitAccount
+from webapp.bdd.models.requests import OpenAccountRequest
+from webapp.bdd.models.transactions_history import TransactionHistory
 from webapp.bdd.models.users import User, Admin, Manager, Client
 from webapp.extensions import db, migrate, babel
 from webapp.conf.config import Config
@@ -29,7 +33,9 @@ def create_app(p_config=Config):
         def inject_conf_var():
             return {'db': db,
                     'User': User, "Admin": Admin, "Manager": Manager, "Client": Client,
-                    "Account": Account, "PaidAccount": PaidAccount, "DebitAccount": DebitAccount
+                    "Account": Account, "PaidAccount": PaidAccount, "DebitAccount": DebitAccount,
+                    "DebitAccountAgiosHistory": DebitAccountAgiosHistory, "PaidAccountBenefitHistory": PaidAccountBenefitHistory, "TransactionHistory": TransactionHistory,
+                    "OpenAccountRequest": OpenAccountRequest
                     }
 
     return app_return
