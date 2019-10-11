@@ -56,3 +56,15 @@ def create_app(p_config=Config):
                     }
 
     return app_return
+
+
+@babel.localeselector
+def get_locale():
+    # if the user has set up the language manually it will be stored in the session,
+    # so we use the locale from the user settings
+    try:
+        language = session['language']
+    except KeyError:
+        language = current_app.config['BABEL_DEFAULT_LOCALE']
+    finally:
+        return language
