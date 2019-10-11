@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, FileField
 from wtforms.validators import DataRequired, Email, EqualTo
 from flask_babel import gettext as _, lazy_gettext as _l
 
@@ -41,5 +41,19 @@ class RegistrationForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     phone = StringField(_l('Phone'), validators=[DataRequired()])
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
+
+    submit = SubmitField(_l('Register'))
+
+
+class ClientRegistrationForm(FlaskForm):
+    firstname = StringField(_l('Firstname'), validators=[DataRequired()])
+    lastname = StringField(_l('Lastname'), validators=[DataRequired()])
+    username = StringField(_l('Username'), validators=[DataRequired()])
+    email = StringField(_l('Email'), validators=[DataRequired(), Email()])
+    phone = StringField(_l('Phone'), validators=[DataRequired()])
+    id_card = FileField(_l('ID card'), validators=[DataRequired()])
+    proof_of_address = FileField(_l('Proof of address'), validators=[DataRequired()])
+    salary = FileField(_l('Salary'), validators=[DataRequired()])
+
 
     submit = SubmitField(_l('Register'))

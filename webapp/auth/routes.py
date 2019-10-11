@@ -7,6 +7,9 @@ from webapp.auth.forms import ClientRegistrationForm, RegistrationForm, LoginFor
 from flask_babel import _
 from flask_login import current_user, login_user, logout_user, login_required
 from webapp.bdd.models.users import User, Client, Admin, Manager, verify_reset_password_token
+from webapp.bdd.models.requests import OpenAccountRequest
+from webapp.bdd.models.utils import store_data, commit_data
+from webapp.extensions import db
 
 
 @bp.route('/login/admin', methods=['GET', 'POST'])
@@ -47,12 +50,30 @@ def login():
                 return redirect(next_page)
     return render_template("auth/login.html", title=_('Login'), form=form)
 
+@bp.route('/register', methods=['GET', 'POST'])
+def register_client():
+    form = ClientRegistrationForm()
+    if form.validate_on_submit():
+        open_account_request = OpenAccountRequest(
+            lastname = form.lastname.data,
+            firstname = form.firstname.data,
+            username = form.username.data,
+            email = form.email.data,
+            phone = form.phone.data,
+            id_card = form.id_card.data,
+            proof_of_address = form.proof_of_address.data,
+            salary = form.salary.data
+        )
+        store_data(open_account_request)
+        flash('Félicitation vous avez fait une demande de création de compte.')
+        return redirect(url_for('main.index'))
+    return render_template('auth/register.html', form=form)
 
 @bp.route('/register/manager', methods=['GET', 'POST'])
 @login_required
 def register():
     form = RegistrationForm()
-    return render_template('auth/register.html', form=form)
+    return render_template('auth/register_admin.html', form=form)
 
 
 @bp.route('/reset_password_request/admin', methods=['GET', 'POST'])

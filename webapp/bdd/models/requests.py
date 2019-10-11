@@ -9,10 +9,16 @@ from webapp.extensions import db
 class OpenAccountRequest(db.Model, PaginatedAPIMixin):
     __tablename__ = 'open_account_request'
 
-    id = db.Column(db.Integer, primary_key=True)  # Integer
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    lastname = db.Column(db.String(64), nullable=False)
+    firstname = db.Column(db.String(64), nullable=False)
+    username = db.Column(db.String(64), nullable=False, unique=True)
+    email = db.Column(db.String(128), nullable=False, unique=True)
+    phone = db.Column(db.String(20), nullable=False)
+    id_card = db.Column(db.LargeBinary, nullable=False)
+    proof_of_address = db.Column(db.LargeBinary, nullable=False)
+    salary = db.Column(db.LargeBinary, nullable=False)
     request_date = db.Column(db.DateTime, default=datetime.utcnow())
-    # type = db.Column(db.String(20))
-    request_data = db.Column(db.Text())
 
     def __init__(self, **kwargs):
         super(OpenAccountRequest, self).__init__(**kwargs)
