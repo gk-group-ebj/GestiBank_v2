@@ -11,8 +11,8 @@ class Config(object):
 
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'root'
-    MYSQL_PASSWORD = 'root'
-    MYSQL_PORT = '8889'
+    MYSQL_PASSWORD = ''
+    MYSQL_PORT = '3306'
     MYSQL_DB = 'gestibank'
 
     MyDB = environ.get("DB") or "Sqlite"
