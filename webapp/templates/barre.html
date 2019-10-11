@@ -7,19 +7,6 @@
 {% block navbar %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <form class="flag-icon" action="{{ url_for('main.set_language') }}" method="POST">
-                <select title="Language" name="lang" onchange="this.form.submit()">
-                    <option value="{{ DEFAULT_LANGUAGE }}"> Default </option>
-                    {% for language in AVAILABLE_LANGUAGES.items() %}
-                        <option value="{{ language[0] }}"
-                                {% if language[0] == CURRENT_LANGUAGE %}
-                                    selected="selected"
-                                {%  endif %}>
-                            {{ language[1] }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </form>
             <a class="navbar-brand" href="{{ url_for('main.index')}}">GestiBank</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -64,6 +51,19 @@
                         </li>
                     {% endif %}
                 </ul>
+                <form class="flag-icon" action="{{ url_for('main.set_language') }}" method="POST">
+                    <select title="Language" name="lang" onchange="this.form.submit()">
+                        <option value="{{ DEFAULT_LANGUAGE }}"> Default </option>
+                        {% for language in AVAILABLE_LANGUAGES.items() %}
+                            <option value="{{ language[0] }}"
+                                    {% if language[0] == CURRENT_LANGUAGE %}
+                                        selected="selected"
+                                    {%  endif %}>
+                                {{ language[1] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
             </div>
         </div>
     </nav>
