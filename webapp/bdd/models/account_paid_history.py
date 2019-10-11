@@ -1,13 +1,19 @@
 # coding: utf-8
 
 from datetime import datetime, timedelta
+
+from flask import url_for
+
 from webapp.bdd.models import PAID_RATE, PAID_THRESHOLD
+from webapp.bdd.models.utils import PaginatedAPIMixin
 from webapp.extensions import db
 
 
-class PaidAccountBenefitHistory(db.Model):
+class PaidAccountBenefitHistory(db.Model, PaginatedAPIMixin):
     __tablename__: "paid_account_benefit_history"
-    __table_args__= {'extend_existing': True}
+    __table_args__ = {
+        'extend_existing': True
+    }
 
     __paid_rate = PAID_RATE
     __paid_THRESHOLD = PAID_THRESHOLD
@@ -23,12 +29,25 @@ class PaidAccountBenefitHistory(db.Model):
         super(PaidAccountBenefitHistory, self).__init__(**kwargs)
         if self.paid_check_date is None:
             self.paid_check_date = datetime.utcnow()
+
         if self.balance_daily is None:
             self.balance_daily = 0.0
+
         if self.paid_threshold_attime:
             self.paid_threshold_attime = 0.0
+
         if self.daily_paid is None:
             self.daily_paid = 0.0
+
+    def to_dict(self, endpoint):
+        data = {
+            'id': self.id,
+            'account_id': self.account_id,
+            '_links': {
+                'self': url_for(endpoint, id=self.id)
+            }
+        }
+        return data
 
     def __str__(self):
         return "<{}}[{} : {} : {} : {} : {} : {}]>" \

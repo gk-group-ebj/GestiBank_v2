@@ -1,12 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField
-from wtforms.validators import ValidationError, DataRequired, Email
-from flask_babel import lazy_gettext as _l
-
+from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms.validators import DataRequired, Email, EqualTo
+from flask_babel import gettext as _, lazy_gettext as _l
 
 """ formulaire de connexion au compte de la banque"""
 
-# a préciser quelles sont les information demandé pour la connexion
+
 class LoginForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     password_hash = PasswordField(_l('Password'), validators=[DataRequired()])
@@ -14,7 +13,26 @@ class LoginForm(FlaskForm):
     submit = SubmitField(_l('Sign In'))
 
 
+""" formulaire saisie email suite mot de passe oublié"""
+
+
+class ResetPasswordRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField(_l('Send email'))
+
+
+""" formulaire mise à jour du mot de passe"""
+
+
+class ResetPasswordForm(FlaskForm):
+    password_hash = PasswordField(_l('Password'), validators=[DataRequired()])
+    confirm_password = PasswordField(_l('Confirm your password'),
+                                     validators=[DataRequired(), EqualTo('password_hash', message='Passwords must match')])
+    submit = SubmitField(_('Reinit your password'))
+
+
 """ formulaire de creation d'un manager par l'admin """
+
 
 class RegistrationForm(FlaskForm):
     mle = StringField(_l('Matricule'), validators=[DataRequired()])
@@ -23,6 +41,5 @@ class RegistrationForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     phone = StringField(_l('Phone'), validators=[DataRequired()])
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
-
 
     submit = SubmitField(_l('Register'))
