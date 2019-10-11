@@ -22,6 +22,10 @@ def load_user(id):
 
 
 class User(db.Model, PaginatedAPIMixin, UserMixin):
+    @property
+    def password_hash(self):
+        return self._password_hash
+
     __tablename__ = 'user'
     __table_args__ = {
         'extend_existing': True
@@ -44,6 +48,10 @@ class User(db.Model, PaginatedAPIMixin, UserMixin):
         'polymorphic_on': type
     }
 
+    def __init__(self, **kwargs):
+        super(User, self).__init__(**kwargs)
+        change_pwd = False
+
     @hybrid_property
     def password_hash(self):
         return self._password
@@ -54,13 +62,15 @@ class User(db.Model, PaginatedAPIMixin, UserMixin):
             self._password = generate_password_hash(password)
             store_data(UserPassword(user_id=self.id, password_hash=self._password))
             commit_data()
-            return True
-        return False
+            self.change_pwd = True
+        else :
+            self.change_pwd = False
 
     def checkpass(self, password):
         if self.password_hash is not None:
             return check_password_hash(self.password_hash, password)
         return False
+
 
     def get_reset_password_token(self, expires_in=None):
         if expires_in is None:

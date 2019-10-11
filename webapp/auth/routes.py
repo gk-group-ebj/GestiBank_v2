@@ -6,11 +6,11 @@ from webapp.auth import bp
 from webapp.auth.forms import RegistrationForm, LoginForm, ResetPasswordRequestForm, ResetPasswordForm
 from flask_babel import _
 from flask_login import current_user, login_user, logout_user, login_required
-from webapp.bdd.models.users import User, verify_reset_password_token
+from webapp.bdd.models.users import User, Client, Admin, Manager, verify_reset_password_token
 
 
-@bp.route('/login/admin', methods=['GET', 'POST'], endpoint='login_admin')
-@bp.route('/login/manager', methods=['GET', 'POST'], endpoint='login_manager')
+@bp.route('/login/admin', methods=['GET', 'POST'])
+@bp.route('/login/manager', methods=['GET', 'POST'])
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -37,13 +37,18 @@ def login():
                 next_page = request.args.get("next")
 
                 if (not next_page) or (url_parse(next_page).netloc != ''):
-                    next_page = url_for("main.index")
+                    if my_user.type == "client":
+                        next_page = url_for("main.index_client")
+                    elif my_user == "admin":
+                        next_page = url_for("main.index_admin")
+                    elif my_user == "manager":
+                        next_page = url_for("main.index_manager")
 
                 return redirect(next_page)
     return render_template("auth/login.html", title=_('Login'), form=form)
 
 
-@bp.route('/register/admin', methods=['GET', 'POST'])
+@bp.route('/register/manager', methods=['GET', 'POST'])
 @login_required
 def register():
     form = RegistrationForm()
@@ -89,16 +94,16 @@ def reset_password(token):
 
     if my_form.validate_on_submit():
         my_user_by_token.password_hash = my_form.password_hash.data
-        if my_user_by_token.password_hash is True:
+        if my_user_by_token.change_pwd:
             flash(
                 _("%(username)s, votre mot de passe a été réinitialisé.", username=my_user_by_token.username.upper()))
             return redirect(url_for('auth.login'))
-
-        flash(_(
-            "%(username)s, vous avez saisi le même mot de passe que les %(nb_pwd)s précédent(s). "
-            "Veuillez modifier votre mot de passe.",
-            username=my_user_by_token.username.upper(),
-            nb_pwd=current_app.config['NB_PWD']))
+        else:
+            flash(_(
+                "%(username)s, vous avez saisi le même mot de passe que les %(nb_pwd)s précédent(s). "
+                "Veuillez modifier votre mot de passe.",
+                username=my_user_by_token.username.upper(),
+                nb_pwd=current_app.config['NB_PWD']))
     return render_template('auth/reset_password.html', title_form="Reset Password", form=my_form)
 
 
