@@ -1,8 +1,8 @@
 from flask_login import login_required
+from werkzeug.utils import redirect
 
 from webapp.main import bp
-from flask import render_template
-#from flask_login import current_user
+from flask import render_template, request, session
 
 
 @bp.route('/')
@@ -42,3 +42,10 @@ def index_client():
 @bp.route('/event/client',  methods=['GET', 'POST'], endpoint='event_client')
 def event():
     return render_template('main/event.html')
+
+
+@bp.route('/language/', methods=['GET', 'POST'])
+@bp.endpoint('set_language')
+def set_language():
+    session['language'] = request.form['lang']
+    return redirect(request.referrer)

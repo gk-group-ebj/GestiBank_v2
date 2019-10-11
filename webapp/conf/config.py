@@ -50,6 +50,10 @@ class Config(object):
     #SMTP SERVER
     # python -m smtpd --debug -n -c DebuggingServer localhost:8025 > webapp/logs/mail.log
 
-
     # ADMINS' EMAILS
     ADMINS_EMAIL = "admin@gestibank.com"
+
+    # BABEL PARAM
+    BABEL_TRANSLATION_DIRECTORIES = path.realpath(path.join(BASEDIR, "..", "conf", "translations"))
+    BABEL_DEFAULT_LOCALE = 'fr'
+    LANGUAGES = dict(de="German", en="English", es="Spanish", fr="French")
