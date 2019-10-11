@@ -39,7 +39,8 @@ def create_app(p_config=Config):
             return {'db': db,
                     'User': User, "Admin": Admin, "Manager": Manager, "Client": Client,
                     "Account": Account, "PaidAccount": PaidAccount, "DebitAccount": DebitAccount,
-                    "DebitAccountAgiosHistory": DebitAccountAgiosHistory, "PaidAccountBenefitHistory": PaidAccountBenefitHistory, "TransactionHistory": TransactionHistory,
+                    "DebitAccountAgiosHistory": DebitAccountAgiosHistory,
+                    "PaidAccountBenefitHistory": PaidAccountBenefitHistory, "TransactionHistory": TransactionHistory,
                     "OpenAccountRequest": OpenAccountRequest
                     }
 

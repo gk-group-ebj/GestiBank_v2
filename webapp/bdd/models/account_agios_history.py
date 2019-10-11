@@ -2,15 +2,19 @@
 
 from datetime import datetime, timedelta
 
+from flask import url_for
+
 from webapp.bdd.models.accounts import DebitAccount, Account
 from webapp.bdd.models import AGIOS_RATE
-from webapp.bdd.models.utils import PaginatedAPIMixin
+from webapp.bdd.models.utils import PaginatedAPIMixin, store_data
 from webapp.extensions import db
 
 
 class DebitAccountAgiosHistory(db.Model, PaginatedAPIMixin):
     __tablename__: "debit_account_agios_history"
-    __table_args__= {'extend_existing': True}
+    __table_args__ = {
+        'extend_existing': True
+    }
 
     __agios_rate = AGIOS_RATE
 
@@ -53,6 +57,17 @@ class DebitAccountAgiosHistory(db.Model, PaginatedAPIMixin):
                 "FAILED: No account_id"
             )
 
+    def to_dict(self, endpoint):
+        data = {
+            'id': self.id,
+            'account_id': self.account_id,
+            '_links': {
+                'self': url_for(endpoint, id=self.id)
+            }
+        }
+        return data
+
+
     @property
     def __str__(self):
         return "<{}[{} : {} : {} : {} : {} : {}]>" \
@@ -74,7 +89,7 @@ class DebitAccountAgiosHistory(db.Model, PaginatedAPIMixin):
                 self.daily_agios = absolute_balance - self.cashier_facility_attime
 
         # Insérer dans la BDD
-        DebitAccountAgiosHistory.populate(self)
+        store_data(self)
 
     @staticmethod
     def calculate_trimester_agios(self):
@@ -106,6 +121,17 @@ class NoAccountIdException(Exception):
 
 
 if __name__ == "__main__":
-    db.metadata.clear()
-    o1 = DebitAccountAgiosHistory(account_id=2, agios_check_date = datetime.strptime("01-03-2019", "%d-%m-%Y"), balance_attime=-300, cashier_facility_attime=200.0)
-    print(o1)
+    o1 = DebitAccountAgiosHistory(account_id=1,
+                                  agios_check_date=datetime.strptime("01-03-2019", "%d-%m-%Y"),
+                                  balance_attime=-300.0,
+                                  cashier_facility_attime=200.0)
+
+    o2 = DebitAccountAgiosHistory(account_id=3,
+                                  agios_check_date=datetime.strptime("01-03-2019", "%d-%m-%Y"),
+                                  balance_attime=-300.0,
+                                  cashier_facility_attime=200.0)
+
+    o3 = DebitAccountAgiosHistory(account_id=5,
+                                  agios_check_date=datetime.strptime("01-03-2019", "%d-%m-%Y"),
+                                  balance_attime=-300.0,
+                                  cashier_facility_attime=200.0)

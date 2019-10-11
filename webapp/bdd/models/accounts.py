@@ -6,7 +6,7 @@ from enum import Enum
 from flask import url_for
 from sqlalchemy.ext.hybrid import hybrid_property
 
-from webapp.bdd.models.utils import PaginatedAPIMixin
+from webapp.bdd.models.utils import PaginatedAPIMixin, store_data
 from webapp.extensions import db
 
 
@@ -18,8 +18,10 @@ class typeAccount(Enum):
 
 
 class Account(db.Model, PaginatedAPIMixin):
-    __tablename__: "account"
-    __table_args__= {'extend_existing': True}
+    __tablename__: 'account'
+    __table_args__ = {
+        'extend_existing': True
+    }
 
     id = db.Column(db.Integer, primary_key=True)  # Integer
     account_number = db.Column(db.Integer, nullable=False, index=True, unique=True)  # Varchar(40)
@@ -108,6 +110,17 @@ class Account(db.Model, PaginatedAPIMixin):
                 "FAILED: le montant impliqué dans l'opération sur le compte {} est négatif".format(self.account_number)
             )
 
+    def to_dict(self, endpoint):
+        data = {
+            'id': self.id,
+            'account': self.account_number,
+            'type': self.type,
+            '_links': {
+                'self': url_for(endpoint, id=self.id)
+            }
+        }
+        return data
+
     def __add__(self, p_count):
         return self.credit(p_count)
 
@@ -121,18 +134,18 @@ class Account(db.Model, PaginatedAPIMixin):
     def __str__(self):
         if self.balance >= 0.0:
             return "<{}[{}:{}:{:+.2f}:{}:{}]>".format(self.__class__.__name__,
-                                                self.account_number,
-                                                self.type.value,
-                                                self.balance,
-                                                self.cashier_facility,
-                                                self.paid_threshold)
+                                                      self.account_number,
+                                                      self.type.value,
+                                                      self.balance,
+                                                      self.cashier_facility,
+                                                      self.paid_threshold)
         else:
             return "<{}[{}:{}:{:-.2f}:{}:{}]>".format(self.__class__.__name__,
-                                                self.account_number,
-                                                self.type.value,
-                                                self.balance,
-                                                self.cashier_facility,
-                                                self.paid_threshold)
+                                                      self.account_number,
+                                                      self.type.value,
+                                                      self.balance,
+                                                      self.cashier_facility,
+                                                      self.paid_threshold)
 
     def __repr__(self):
         return self.__str__()
@@ -146,26 +159,6 @@ class Account(db.Model, PaginatedAPIMixin):
             }
         }
         return data
-
-    @staticmethod
-    def from_dict(cls, data, p_object=None):
-        if data.json:
-            data = data.json
-        elif data.args:
-            data = data.args
-        else:
-            return None
-
-        if p_object is not None:
-            my_object = p_object
-        else:
-            my_object = Account()
-
-        my_attr_dict = dict(Account)
-
-        for field in my_attr_dict:
-            if field in data:
-                setattr(my_object, field, data[field])
 
 
 class PaidAccount(Account):
@@ -214,4 +207,14 @@ class NegativePaidThresholdException(Exception):
 
 
 if __name__ == "__main__":
-    db.metadata.clear()
+    a1 = Account(account_number=101, client_id=7)
+    a2 = Account(account_number=102, client_id=8)
+    store_data(a1, a2)
+
+    d1 = DebitAccount(account_number=201, client_id=8)
+    d2 = DebitAccount(account_number=202, client_id=9)
+    store_data(d1, d2)
+
+    p1 = PaidAccount(account_number=301, client_id=9)
+    p2 = PaidAccount(account_number=302, client_id=7)
+    store_data(p1, p2)
