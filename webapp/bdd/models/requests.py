@@ -7,7 +7,7 @@ from webapp.extensions import db
 
 
 class OpenAccountRequest(db.Model, PaginatedAPIMixin):
-    # __abstract__ = True
+    __tablename__ = 'open_account_request'
 
     id = db.Column(db.Integer, primary_key=True)  # Integer
     request_date = db.Column(db.DateTime, default=datetime.utcnow())
@@ -16,12 +16,24 @@ class OpenAccountRequest(db.Model, PaginatedAPIMixin):
 
     def __init__(self, **kwargs):
         super(OpenAccountRequest, self).__init__(**kwargs)
-        self.request_date = datetime.utcnow()
+        if self.request_date is None:
+            self.request_date = datetime.utcnow()
+
+    def to_dict(self, endpoint):
+        data = {
+            'id': self.id,
+            'request': self.type,
+            '_links': {
+                'self': url_for(endpoint, id=self.id)
+            }
+        }
+        return data
 
     def __str__(self):
-        return "<Request[{}:{}:{:+.2f}]>".format(self.id,
-                                                 self.request_date.strftime("%d-%m-%Y"),
-                                                 self.balance)
+        return "<{}[{}:{}:{:+.2f}]>".format(self.__class__.__name__,
+                                            self.id,
+                                            self.request_date.strftime("%d-%m-%Y"),
+                                            self.balance)
 
     def __repr__(self):
         return self.__str__()
@@ -29,7 +41,7 @@ class OpenAccountRequest(db.Model, PaginatedAPIMixin):
     def to_dict(self, endpoint):
         data = {
             'id': self.id,
-            'account_number': self.account_number,
+            'reqquest': self.account_number,
             '_links': {
                 'self': url_for(endpoint, id=self.id)
             }

@@ -1,5 +1,3 @@
-from webapp.bdd.models import users
-
 # APPLICATION CONFIG
 # PAID ACCOUNT
 PAID_RATE = 0.02

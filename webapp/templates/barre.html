@@ -5,9 +5,21 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/clean-blog.css') }}" />
 {% endblock %}
 {% block navbar %}
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
+            <form class="flag-icon" action="{{ url_for('main.set_language') }}" method="POST">
+                <select title="Language" name="lang" onchange="this.form.submit()">
+                    <option value="{{ DEFAULT_LANGUAGE }}"> Default </option>
+                    {% for language in AVAILABLE_LANGUAGES.items() %}
+                        <option value="{{ language[0] }}"
+                                {% if language[0] == CURRENT_LANGUAGE %}
+                                    selected="selected"
+                                {%  endif %}>
+                            {{ language[1] }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
             <a class="navbar-brand" href="{{ url_for('main.index')}}">GestiBank</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -15,11 +27,17 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     {% if current_user.type == "client" %}
-                        <li>
-                            <a href="{{ url_for('main.index_client') }}">{{_('Index')}}</a>
+                        <li class="nav-item">
+                            <a href="{{ url_for('main.index_client') }}">{{_('My account')}}</a>
                         </li>
-                    {% else %}
-                        <li><a href="{{ url_for('main.index') }}">{{_('Home')}}</a></li>
+                    {% elif current_user.type == "manager" %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('main.index_manager') }}">{{_('My account')}}</a>
+                        </li>
+                    {% elif current_user.type == "admin" %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('main.index_admin') }}">{{_('My account')}}</a>
+                        </li>
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.event')}}">{{_('Event')}}</a>
@@ -28,24 +46,23 @@
                         <a class="nav-link" href="{{ url_for('auth.register')}}">{{_('Registration')}}</a>
                     </li>
                     <li class="nav-item">
-                        {% if current_user.is_anonymous %}
-                            <a href="{{url_for('auth.login')}}">{{_('Login')}}</a>
-                        {% else %}
-                            <a href="{{ url_for('auth.logout') }}">{{_('Logout')}}</a>
-                        {% endif %}
+                        <a class="nav-link" href=#>{{_('Employees')}}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href=#>{{_('My homepage')}}</a>
+                        <a class="nav-link" href=#">{{_('Requests')}}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link " href=#>{{_('Employees')}}</a>
+                        <a class="nav-link" href=#>{{_('Account')}}</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href=#">{{_('Requests')}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href=#>{{_('Account')}}</a>
-                    </li>
+                    {% if current_user.is_anonymous %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('auth.login')}}">{{_('Login')}}</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.logout') }}">{{_('Logout')}}</a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

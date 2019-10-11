@@ -2,10 +2,11 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>{{_('Login')}}</h1>
-    <div class="row">
+    <h1 class="login_title row justify-content-center">{{_('Login')}}</h1>
+    <div class="row justify-content-center">
         <div class="col-md-4">
             {{ wtf.quick_form(form) }}
+            <a href="{{url_for('auth.reset_password_request')}}">{{ _("Forgotten password ?") }}</a>
         </div>
     </div>
 {% endblock %}

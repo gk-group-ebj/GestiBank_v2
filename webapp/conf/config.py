@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from os import path, environ
 
 from sqlalchemy.pool import SingletonThreadPool
@@ -37,3 +39,21 @@ class Config(object):
         }
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # PASSWORD MANAGEMENT
+    NB_PWD = 2
+    EXPIRES_IN = 600
+
+    # MAIL
+    MAIL_SERVER = environ.get('MAIL_SERVER') or "localhost"
+    MAIL_PORT = environ.get('MAIL_PORT') or "8025"
+    #SMTP SERVER
+    # python -m smtpd --debug -n -c DebuggingServer localhost:8025 > webapp/logs/mail.log
+
+    # ADMINS' EMAILS
+    ADMINS_EMAIL = "admin@gestibank.com"
+
+    # BABEL PARAM
+    BABEL_TRANSLATION_DIRECTORIES = path.realpath(path.join(BASEDIR, "..", "conf", "translations"))
+    BABEL_DEFAULT_LOCALE = 'fr'
+    LANGUAGES = dict(de="German", en="English", es="Spanish", fr="French")
