@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from os import path, environ
 
 from sqlalchemy.pool import SingletonThreadPool
@@ -37,3 +39,7 @@ class Config(object):
         }
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # PASSWORD MANAGEMENT
+    NB_PWD = 2
+    EXPIRES_IN = 600

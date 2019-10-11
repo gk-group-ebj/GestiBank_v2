@@ -52,7 +52,7 @@ class User(db.Model, PaginatedAPIMixin, UserMixin):
 
     @password_hash.setter
     def password_hash(self, password):
-        if (self.password_hash is None) or (UserPassword.verify_password(self.id, password) is False):
+        if (self.password_hash is None) or (UserPassword.verify_old_password(self.id, password) is False):
             self.password_hash = generate_password_hash(password)
             store_data(
                 [UserPassword(user_id=self.id, password_hash=self.password_hash)])
@@ -182,7 +182,7 @@ class UserPassword(db.Model):
     password_hash = db.Column(db.String(128))
 
     @staticmethod
-    def verify_password(p_id, p_pwd, p_nb_pwd=None):
+    def verify_old_password(p_id, p_pwd, p_nb_pwd=None):
         if (p_id is not None) and (p_pwd is not None):
             if p_nb_pwd is None:
                 p_nb_pwd = current_app.config['NB_PWD']
