@@ -5,7 +5,6 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/clean-blog.css') }}" />
 {% endblock %}
 {% block navbar %}
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('main.index')}}">GestiBank</a>
@@ -14,37 +13,49 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    {% if current_user.type == "client" %}
-                        <li>
-                            <a href="{{ url_for('main.index_client') }}">{{_('Index')}}</a>
+                    {% with my_index_url =  'main.index' %}
+                        {% if current_user.type == "client" or 'client' in request.path %}
+                            {% set my_index_url = 'main.index_client' %}
+                        {% elif current_user.type == "manager" or 'manager' in request.path %}
+                            {% set my_index_url = 'main.index_manager' %}
+                        {% elif current_user.type == "admin" or 'admin' in request.path %}
+                            {% set my_index_url = 'main.index_admin' %}
+                        {% endif %}
+                        <li class="nav-item">
+                            <a href="{{ url_for(my_index_url) }}">{{_('Home')}}</a>
                         </li>
-                    {% else %}
-                        <li><a href="{{ url_for('main.index') }}">{{_('Home')}}</a></li>
+                    {% endwith %}
+                    {% if current_user.type == "client" %}
+                        <li class="nav-item">
+                            <a class="nav-link " href=#>{{_('Espace Client')}}</a>
+                        </li>
+                    {% endif %}
+                    {% if current_user.type == "admin" %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.register')}}">{{_('Registration')}}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href=#>{{_('Managers')}}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href=#">{{_('Open Account Requests')}}</a>
+                        </li>
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('main.event')}}">{{_('Event')}}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.register')}}">{{_('Registration')}}</a>
-                    </li>
-                    <li class="nav-item">
                         {% if current_user.is_anonymous %}
-                            <a href="{{url_for('auth.login')}}">{{_('Login')}}</a>
+                            {% if 'admin' in request.path %}
+                                <a href="{{ url_for('auth.login_admin') }}">{{_('Login')}}</a>
+                            {% elif 'manager' in request.path %}
+                                <a href="{{ url_for('auth.login_manager') }}">{{_('Login')}}</a>
+                            {% else %}
+                                <a href="{{ url_for('auth.login') }}">{{_('Login')}}</a>
+                            {% endif %}
                         {% else %}
                             <a href="{{ url_for('auth.logout') }}">{{_('Logout')}}</a>
                         {% endif %}
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href=#>{{_('My homepage')}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href=#>{{_('Employees')}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href=#">{{_('Requests')}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link " href=#>{{_('Account')}}</a>
                     </li>
                 </ul>
             </div>

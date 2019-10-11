@@ -11,8 +11,8 @@ class Config(object):
 
     MYSQL_HOST = 'localhost'
     MYSQL_USER = 'root'
-    MYSQL_PASSWORD = ''
-    MYSQL_PORT = '3306'
+    MYSQL_PASSWORD = 'root'
+    MYSQL_PORT = '8889'
     MYSQL_DB = 'gestibank'
 
     MyDB = environ.get("DB") or "Sqlite"
@@ -43,3 +43,13 @@ class Config(object):
     # PASSWORD MANAGEMENT
     NB_PWD = 2
     EXPIRES_IN = 600
+
+    # MAIL
+    MAIL_SERVER = environ.get('MAIL_SERVER') or "localhost"
+    MAIL_PORT = environ.get('MAIL_PORT') or "8025"
+    #SMTP SERVER
+    # python -m smtpd --debug -n -c DebuggingServer localhost:8025 > webapp/logs/mail.log
+
+
+    # ADMINS' EMAILS
+    ADMINS_EMAIL = "admin@gestibank.com"

@@ -6,7 +6,7 @@ from webapp.bdd.models.accounts import Account, PaidAccount, DebitAccount
 from webapp.bdd.models.requests import OpenAccountRequest
 from webapp.bdd.models.transactions_history import TransactionHistory
 from webapp.bdd.models.users import User, Admin, Manager, Client, UserPassword
-from webapp.extensions import db, migrate, babel, bootstrap, login, _l
+from webapp.extensions import db, migrate, babel, bootstrap, login, _l, mail
 from webapp.conf.config import Config
 
 
@@ -29,6 +29,8 @@ def create_app(p_config=Config):
         bootstrap.init_app(app_return)
 
         login.init_app(app_return)
+
+        mail.init_app(app_return)
 
         app_return.register_blueprint(auth_bp)
         app_return.register_blueprint(main_bp)
