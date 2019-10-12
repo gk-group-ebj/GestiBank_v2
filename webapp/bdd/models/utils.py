@@ -68,6 +68,7 @@ def commit_data():
         db.session.commit()
     except SQLAlchemyError as err:
         db.session.rollback()
+        raise err
 
 
 def store_data(*item):
