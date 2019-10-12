@@ -1,5 +1,6 @@
 from flask import render_template, request, flash, redirect, url_for, current_app
 from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
 
 from webapp.api.mail.email import send_password_reset_email
 from webapp.auth import bp
@@ -60,9 +61,9 @@ def register_client():
             username = form.username.data,
             email = form.email.data,
             phone = form.phone.data,
-            id_card = form.id_card.data,
-            proof_of_address = form.proof_of_address.data,
-            salary = form.salary.data
+            id_card = form.id_card.data.read(),
+            proof_of_address = form.proof_of_address.data.read(),
+            salary = form.salary.data.read()
         )
         store_data(open_account_request)
         flash('Félicitation vous avez fait une demande de création de compte.')
