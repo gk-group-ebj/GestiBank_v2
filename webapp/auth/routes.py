@@ -55,15 +55,18 @@ def login():
 def register_client():
     form = ClientRegistrationForm()
     if form.validate_on_submit():
+        id_card = form.id_card.data.read()
+        proof_of_address = form.proof_of_address.data.read()
+        salary = form.salary.data.read()
         open_account_request = OpenAccountRequest(
             lastname = form.lastname.data,
             firstname = form.firstname.data,
             username = form.username.data,
             email = form.email.data,
             phone = form.phone.data,
-            id_card = form.id_card.data.read(),
-            proof_of_address = form.proof_of_address.data.read(),
-            salary = form.salary.data.read()
+            id_card = id_card,
+            proof_of_address = proof_of_address,
+            salary = salary
         )
         store_data(open_account_request)
         flash('Félicitation vous avez fait une demande de création de compte.')
