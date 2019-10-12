@@ -3,7 +3,7 @@ from werkzeug.urls import url_parse
 
 from webapp.api.mail.email import send_password_reset_email
 from webapp.auth import bp
-from webapp.auth.forms import ClientRegistrationForm, RegistrationForm, LoginForm, ResetPasswordRequestForm, ResetPasswordForm
+from webapp.auth.forms import RegistrationForm, LoginForm, ResetPasswordRequestForm, ResetPasswordForm
 from flask_babel import _
 from flask_login import current_user, login_user, logout_user, login_required
 from webapp.bdd.models.users import User, Client, Admin, Manager, verify_reset_password_token

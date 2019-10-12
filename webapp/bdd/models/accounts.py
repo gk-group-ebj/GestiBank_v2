@@ -28,20 +28,20 @@ class Account(db.Model, PaginatedAPIMixin):
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'), index=True)
     type = db.Column(db.Enum(typeAccount), nullable=False,
                      server_default=typeAccount.CURRENT_ACCOUNT.name)  # Enum typeAccount
-    creation_date = db.Column(db.DateTime, default=datetime.utcnow())  # Datetime(20)
+    creation_date = db.Column(db.DateTime, default=datetime.utcnow())  # Datetime
     iban = db.Column(db.String(20), unique=True)  # Varchar(20)
     balance = db.Column(db.Float(12, 2), default=0)
     _cashier_facility = db.Column("cashier_facility", db.Float(12, 2), default=0)
     _paid_threshold = db.Column("paid_threshold", db.Float(12, 2), default=0)
 
     __mapper_args__ = {
-        'polymorphic_identity': 'account',
-        'polymorphic_on': type
+        'polymorphic_identity': 'CURRENT_ACCOUNT',
+        'polymorphic_on': type.name
     }
 
     def __init__(self, **kwargs):
         super(Account, self).__init__(**kwargs)
-        self.type = typeAccount.CURRENT_ACCOUNT
+        self.type = typeAccount.CURRENT_ACCOUNT.name
 
         if self.creation_date is None:
             self.creation_date = datetime.utcnow()
@@ -165,12 +165,12 @@ class PaidAccount(Account):
     __tablename__ = None
 
     __mapper_args__ = {
-        'polymorphic_identity': 'paid_account'
+        'polymorphic_identity': 'PAID_ACCOUNT'
     }
 
     def __init__(self, **kwargs):
         super(PaidAccount, self).__init__(**kwargs)
-        self.type = typeAccount.PAID_ACCOUNT
+        self.type = typeAccount.PAID_ACCOUNT.name
         # self.benefit = 0.0
 
 
@@ -178,12 +178,12 @@ class DebitAccount(Account):
     __tablename__ = None
 
     __mapper_args__ = {
-        'polymorphic_identity': 'debit_account'
+        'polymorphic_identity': 'DEBIT_ACCOUNT'
     }
 
     def __init__(self, **kwargs):
         super(DebitAccount, self).__init__(**kwargs)
-        self.type = typeAccount.DEBIT_ACCOUNT
+        self.type = typeAccount.DEBIT_ACCOUNT.name
 
 
 class NegativeBalanceException(Exception):
@@ -206,7 +206,18 @@ class NegativePaidThresholdException(Exception):
         self.__message = p_message
 
 
+class UnexpectedAccountTypeException(Exception):
+    def __init__(self, p_message):
+        self.__message = p_message
+
+
+class NoAccountIdException(Exception):
+    def __init__(self, p_message):
+        self.__message = p_message
+
+
 if __name__ == "__main__":
+    # from webapp.bdd.models.utils import store_data
     a1 = Account(account_number=101, client_id=7)
     a2 = Account(account_number=102, client_id=8)
     store_data(a1, a2)

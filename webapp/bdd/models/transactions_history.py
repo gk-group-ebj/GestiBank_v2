@@ -5,6 +5,7 @@ from enum import Enum
 
 from flask import url_for
 
+from webapp.bdd.models.accounts import Account, NoAccountIdException
 from webapp.bdd.models.utils import PaginatedAPIMixin
 from webapp.extensions import db
 
@@ -24,10 +25,12 @@ class TransactionHistory(db.Model, PaginatedAPIMixin):
     }
 
     id = db.Column(db.Integer, primary_key=True)  # Integer
-    operation_date = db.Column(db.DateTime, default=datetime.utcnow(), index=True)  # Varchar(20)
+    operation_date = db.Column(db.DateTime, default=datetime.utcnow(), index=True)  # Datetime
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False, index=True)
-    type = db.Column(db.Enum(typeTransaction), nullable=False)  # Enum typeAccount
+    type = db.Column(db.Enum(typeTransaction), nullable=False,
+                     server_default=typeTransaction.CREDIT.name)  # Enum typeTransaction
     operation_amount = db.Column(db.Float(12, 2), default=0)
+    balance_before_transaction = db.Column(db.Float(12, 2), default=0)
     balance_attime = db.Column(db.Float(12, 2), default=0)
 
     def __init__(self, **kwargs):
@@ -35,11 +38,26 @@ class TransactionHistory(db.Model, PaginatedAPIMixin):
         if self.operation_date is None:
             self.operation_date = datetime.utcnow()
 
-        if self.balance_attime is None:
-            self.balance_attime = 0.0
-
         if self.operation_amount is None:
             self.operation_amount = 0.0
+
+        if self.type is None:
+            self.type = None
+
+        if self.account_id is not None:
+            account = Account.query.get(self.account_id)
+            if account:
+                if self.balance_before_transaction is None:
+                    self.balance_before_transaction = account.balance
+                    self.balance_attime = 0.0
+            else:
+                raise NoAccountIdException(
+                    "FAILED: No account_id"
+                )
+        else:
+            raise NoAccountIdException(
+                "FAILED: No account_id"
+            )
 
     def to_dict(self, endpoint):
         data = {
@@ -53,18 +71,30 @@ class TransactionHistory(db.Model, PaginatedAPIMixin):
         return data
 
     def __str__(self):
-        return "<{}}[{} : {} : {} : {} : {} : {}]>" \
-            .format(self.__class__.__name__,
-                    self.id,
-                    self.account_id,
-                    self.operation_date.strftime("%d-%m-%Y"),
-                    self.type,
-                    self.operation_amount,
-                    self.balance_attime)
+        return "<{}[{} : {} : {} : {} : {} : {} : {}]>".format(self.__class__.__name__,
+                                                               self.id,
+                                                               self.account_id,
+                                                               self.operation_date.strftime("%d-%m-%Y"),
+                                                               self.type.value,
+                                                               self.balance_before_transaction,
+                                                               self.operation_amount,
+                                                               self.balance_attime
+                                                               )
 
     def __repr__(self):
-        return self.__str__
+        return self.__str__()
 
 
 if __name__ == "__main__":
-    pass
+    from webapp.bdd.models.utils import store_data
+    from datetime import datetime, timedelta
+    from webapp.bdd.models.transactions_history import typeTransaction
+
+    date_jour = datetime.utcnow()
+    trimester_agios = 100
+    t = TransactionHistory(operation_date=date_jour,
+                           account_id=201,
+                           operation_amount=trimester_agios,
+                           type=typeTransaction.DEBIT_AGIOS
+                           )
+    store_data(t)

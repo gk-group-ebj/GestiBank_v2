@@ -1,4 +1,5 @@
 # coding: utf-8
+from collections import Iterable
 
 import jwt
 from flask import url_for, current_app
@@ -9,8 +10,8 @@ from webapp.extensions import db
 
 
 class PaginatedAPIMixin(object):
-    @staticmethod
-    def from_dict(cls, data, p_object=None, p_class=None, new_user=False):
+    @classmethod
+    def from_dict(cls, data, p_object=None, new_user=False):
         if data.json:
             data = data.json
         elif data.args:
@@ -21,9 +22,9 @@ class PaginatedAPIMixin(object):
         if p_object is not None:
             my_object = p_object
         else:
-            my_object = p_class()
+            my_object = cls()
 
-        my_attr_dict = dict(p_class)
+        my_attr_dict = dict(cls)
         my_attr_dict.remove('password_hash')
 
         for field in my_attr_dict:
@@ -57,9 +58,9 @@ class PaginatedAPIMixin(object):
         }
         return data
 
-    @staticmethod
-    def list_all():
-        return __class__.query.all()
+    @classmethod
+    def list_all(cls):
+        return cls.query.all()
 
 
 def commit_data():
@@ -71,10 +72,13 @@ def commit_data():
 
 def store_data(*item):
     for i in item:
-        if type(item) is not list:
-            to_list = list(item)
+        if type(i) is not list:
+            if isinstance(i, Iterable):
+                to_list = list(i)
+            else:
+                to_list = [i]
         else:
-            to_list = item
+            to_list = i
         db.session.add_all(to_list)
         commit_data()
 
