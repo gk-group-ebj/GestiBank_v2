@@ -39,9 +39,9 @@ def login():
                 if (not next_page) or (url_parse(next_page).netloc != ''):
                     if my_user.type == "client":
                         next_page = url_for("main.index_client")
-                    elif my_user == "admin":
+                    elif my_user.type == "admin":
                         next_page = url_for("main.index_admin")
-                    elif my_user == "manager":
+                    elif my_user.type == "manager":
                         next_page = url_for("main.index_manager")
 
                 return redirect(next_page)
