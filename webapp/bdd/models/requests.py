@@ -48,29 +48,14 @@ class OpenAccountRequest(db.Model, PaginatedAPIMixin):
     def to_dict(self, endpoint):
         data = {
             'id': self.id,
-            'reqquest': self.account_number,
+            'request': self.request_data,
             '_links': {
                 'self': url_for(endpoint, id=self.id)
             }
         }
         return data
 
-    @staticmethod
-    def from_dict(cls, data, p_object=None):
-        if data.json:
-            data = data.json
-        elif data.args:
-            data = data.args
-        else:
-            return None
 
-        if p_object is not None:
-            my_object = p_object
-        else:
-            my_object = OpenAccountRequest()
-
-        my_attr_dict = dict(OpenAccountRequest)
-
-        for field in my_attr_dict:
-            if field in data:
-                setattr(my_object, field, data[field])
+if __name__ == "__main__":
+    # from webapp.bdd.models.utils import store_data
+    pass

@@ -1,0 +1,40 @@
+
+from webapp.bdd.models.utils import store_data
+
+# Users
+
+a1 = Admin(username="admin1", email="admin1@gestibank.fr")
+a2 = Admin(username="admin2", email="admin2@gestibank.fr")
+m1 = Manager(username="manager1", email="manager1@gestibank.fr", mle=100)
+m2 = Manager(username="manager2", email="manager2@gestibank.fr", mle=101)
+u1 = User(username="user1", email="user1@yahoo.fr")
+u2 = User(username="user2", email="user2@gmail.com")
+c1 = Client(username="client1", email="client1@yahoo.fr", manager_id=m1.id)
+c2 = Client(username="client2", email="client2@orange.fr", manager_id=m1.id)
+c3 = Client(username="client3", email="client3@hotmail.com", manager_id=m2.id)
+store_data(a1, a2, m1, m2, u1, u2, c1, c2, c3)
+
+# Accounts
+
+ac1 = Account(account_number=101, client_id=7)
+ac2 = Account(account_number=102, client_id=8)
+dc1 = DebitAccount(account_number=201, client_id=8)
+dc2 = DebitAccount(account_number=202, client_id=9)
+pc1 = PaidAccount(account_number=301, client_id=9)
+pc2 = PaidAccount(account_number=302, client_id=7)
+store_data(ac1, ac2, dc1, dc2, pc1, pc2)
+
+
+from datetime import datetime, timedelta
+from webapp.bdd.models.transactions_history import typeTransaction
+
+# Transactions
+date_jour = datetime.utcnow()
+trimester_agios = 100
+debit_account_id = 3
+t = TransactionHistory(operation_date=date_jour,
+                       account_id=debit_account_id,
+                       operation_amount=trimester_agios,
+                       type=typeTransaction.DEBIT_AGIOS
+                       )
+store_data(t)

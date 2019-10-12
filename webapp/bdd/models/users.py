@@ -50,7 +50,7 @@ class User(db.Model, PaginatedAPIMixin, UserMixin):
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
-        change_pwd = False
+        self.change_pwd = False
 
     @hybrid_property
     def password_hash(self):
@@ -63,14 +63,13 @@ class User(db.Model, PaginatedAPIMixin, UserMixin):
             store_data(UserPassword(user_id=self.id, password_hash=self._password))
             commit_data()
             self.change_pwd = True
-        else :
+        else:
             self.change_pwd = False
 
     def checkpass(self, password):
         if self.password_hash is not None:
             return check_password_hash(self.password_hash, password)
         return False
-
 
     def get_reset_password_token(self, expires_in=None):
         if expires_in is None:
@@ -223,6 +222,7 @@ def verify_reset_password_token(token):
 
 
 if __name__ == "__main__":
+    # from webapp.bdd.models.utils import store_data
     a1 = Admin(username="admin1", email="admin1@gestibank.fr")
     a2 = Admin(username="admin2", email="admin2@gestibank.fr")
     store_data(a1)
