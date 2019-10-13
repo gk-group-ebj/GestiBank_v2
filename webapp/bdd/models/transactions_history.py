@@ -5,7 +5,7 @@ from enum import Enum
 
 from flask import url_for
 
-from webapp.bdd.models.accounts import Account, NoAccountIdException
+from webapp.bdd.models.accounts import Account, NoAccountIdException, NegativeOperationException
 from webapp.bdd.models.utils import PaginatedAPIMixin
 from webapp.extensions import db
 
@@ -40,16 +40,22 @@ class TransactionHistory(db.Model, PaginatedAPIMixin):
 
         if self.operation_amount is None:
             self.operation_amount = 0.0
-
-        if self.type is None:
-            self.type = None
+        elif self.operation_amount < 0.0:
+            raise NegativeOperationException(
+                "FAILED: le montant impliqué dans l'opération sur le compte {} est négatif".format(self.account_number)
+            )
 
         if self.account_id is not None:
-            account = Account.query.get(self.account_id)
-            if account:
+            self.account = Account.query.get(self.account_id)
+            if self.account:
                 if self.balance_before_transaction is None:
-                    self.balance_before_transaction = account.balance
-                    self.balance_attime = 0.0
+                    self.balance_before_transaction = self.account.balance
+
+                if self.balance_attime is None:
+                    if self.type == typeTransaction.CREDIT or self.type == typeTransaction.CREDIT_BENEFIT:
+                        self.balance_attime = self.account.credit(self.operation_amount)
+                    elif self.type == typeTransaction.DEBIT or self.type == typeTransaction.DEBIT_AGIOS:
+                        self.balance_attime = self.account.debit(self.operation_amount)
             else:
                 raise NoAccountIdException(
                     "FAILED: No account_id"
@@ -75,7 +81,7 @@ class TransactionHistory(db.Model, PaginatedAPIMixin):
                                                                self.id,
                                                                self.account_id,
                                                                self.operation_date.strftime("%d-%m-%Y"),
-                                                               self.type.value,
+                                                               self.type.name,
                                                                self.balance_before_transaction,
                                                                self.operation_amount,
                                                                self.balance_attime

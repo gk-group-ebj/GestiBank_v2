@@ -5,7 +5,7 @@ from sqlalchemy import func
 
 from flask import url_for
 
-from webapp.bdd.models.accounts import Account, DebitAccount, UnexpectedAccountTypeException, NoAccountIdException
+from webapp.bdd.models.accounts import Account, DebitAccount, UnexpectedAccountTypeException, NoAccountIdException, typeAccount
 from webapp.bdd.models import AGIOS_RATE
 from webapp.bdd.models.utils import PaginatedAPIMixin, store_data
 from webapp.bdd.models.transactions_history import typeTransaction, TransactionHistory
@@ -26,7 +26,7 @@ class DebitAccountAgiosHistory(db.Model, PaginatedAPIMixin):
     agios_check_date = db.Column(db.DateTime, default=datetime.utcnow(), index=True)  # Varchar(20)
     cashier_facility_attime = db.Column(db.Float(12, 2), default=0)
     balance_attime = db.Column(db.Float(12, 2), default=0)
-    daily_agios = db.Column(db.Float(12, 2), default=0)
+    daily_underthreshold = db.Column("amount_under_threshold", db.Float(12, 2), default=0)
 
     # Dictionnaire pour le calcul trimestriel des agios à date fixe
     DICT_DATES = {0: '01-01',
@@ -39,26 +39,22 @@ class DebitAccountAgiosHistory(db.Model, PaginatedAPIMixin):
         if self.agios_check_date is None:
             self.agios_check_date = datetime.utcnow()
 
-        if self.daily_agios is None:
-            self.daily_agios = 0.0
+        if self.daily_underthreshold is None:
+            self.daily_underthreshold = 0.0
 
         if self.account_id is not None:
             account = Account.query.get(self.account_id)
-            if account:
-                if isinstance(account, DebitAccount):
-                    if self.balance_attime is None:
-                        self.balance_attime = account.balance
+            account_type = account.type
+            if account_type == typeAccount.DEBIT_ACCOUNT:
+                if self.balance_attime is None:
+                    self.balance_attime = account.balance
 
                     if self.cashier_facility_attime is None:
                         self.cashier_facility_attime = account.cashier_facility
-                else:
-                    raise UnexpectedAccountTypeException(
-                        "FAILED: le compte {} est de type {}. Il n'est pas soumis au calcul d'Agios".format(
-                            account.account_number, account.type)
-                    )
             else:
-                raise NoAccountIdException(
-                    "FAILED: No account_id"
+                raise UnexpectedAccountTypeException(
+                    "FAILED: le compte {} est de type {}. Il n'est pas soumis au prélèvement d'Agios".format(
+                    account.account_number, account.type)
                 )
         else:
             raise NoAccountIdException(
@@ -83,21 +79,24 @@ class DebitAccountAgiosHistory(db.Model, PaginatedAPIMixin):
                     self.agios_check_date.strftime("%d-%m-%Y"),
                     self.cashier_facility_attime,
                     self.balance_attime,
-                    self.daily_agios)
+                    self.daily_underthreshold)
 
     def __repr__(self):
         return self.__str__()
 
-    def calculate_daily_agios(self):
+    def calculate_daily_underthreshold(self):
         if self.balance_attime < 0:
             absolute_balance = abs(self.balance_attime)
             if absolute_balance > self.cashier_facility_attime:
-                self.daily_agios = absolute_balance - self.cashier_facility_attime
-                # Ajouter une ligne dans la table des historiques agios si daily_agios est valorisé
+                self.daily_underthreshold = absolute_balance - self.cashier_facility_attime
+                # Remplis le champ dans la table historique agios si valorisé
                 store_data(self)
+        else:
+            self.daily_underthreshold = 0.0
+            store_data(self)
 
     @staticmethod
-    def calculate_trimester_agios(self, p_amount):
+    def calculate_trimester_agios(p_amount):
         return (float(p_amount) * AGIOS_RATE) / (100.0 * 365.0)
 
     @staticmethod
@@ -118,23 +117,23 @@ class DebitAccountAgiosHistory(db.Model, PaginatedAPIMixin):
             str_start_interval = str(y) + "-" + start
 
             list_amounts = DebitAccountAgiosHistory.query.with_entities(DebitAccountAgiosHistory.account_id, func.sum(
-                DebitAccountAgiosHistory.daily_agios)). \
+                DebitAccountAgiosHistory.daily_underthreshold)). \
                 filter(DebitAccountAgiosHistory.agios_check_date.between(str_start_interval, str_end_interval)). \
                 group_by(DebitAccountAgiosHistory.account_id).all()
 
             for i in list_amounts:
                 debit_account_id = i[0]
-                trimester_agios = DebitAccountAgiosHistory.calculate_trimester_agios(i[1])
+                amount = float(i[1])
+                trimester_agios = DebitAccountAgiosHistory.calculate_trimester_agios(amount)
                 t = TransactionHistory(
                     operation_date=date_jour,
                     account_id=debit_account_id,
                     operation_amount=trimester_agios,
                     type=typeTransaction.DEBIT_AGIOS
                 )
-
-                d = Account.query.get(t.account_id)
-                t.balance_attime = d.debit(t.operation_amount)
-                store_data(d, t)
+                store_data(t.account, t)
+        else:
+            pass
 
 
 if __name__ == "__main__":
@@ -142,37 +141,11 @@ if __name__ == "__main__":
     # from datetime import datetime, timedelta
     # from webapp.bdd.models.transactions_history import typeTransaction
 
-    o1 = DebitAccountAgiosHistory(account_id=1,
-                                  agios_check_date=datetime.strptime("11-10-2018", "%d-%m-%Y"),
-                                  balance_attime=-300.0,
-                                  cashier_facility_attime=200.0)
+    ah10 = DebitAccountAgiosHistory(account_id=2, agios_check_date=datetime.strptime("2009-01-01", "%Y-%m-%d"),
+                                    cashier_facility_attime=100.0, balance_attime=-200.0)
+    #ah2.calculate_daily_underthreshold()
+    ah10.update_trimester_agios(datetime.strptime("2019-07-01", "%Y-%m-%d"))
 
-    o2 = DebitAccountAgiosHistory(account_id=1,
-                                  agios_check_date=datetime.strptime("01-04-2019", "%d-%m-%Y"),
-                                  balance_attime=-300.0,
-                                  cashier_facility_attime=200.0)
 
-    o3 = DebitAccountAgiosHistory(account_id=1,
-                                  agios_check_date=datetime.strptime("01-05-2019", "%d-%m-%Y"),
-                                  balance_attime=-400.0,
-                                  cashier_facility_attime=200.0)
 
-    o4 = DebitAccountAgiosHistory(account_id=1,
-                                  agios_check_date=datetime.strptime("01-06-2019", "%d-%m-%Y"),
-                                  balance_attime=-400.0,
-                                  cashier_facility_attime=400.0)
 
-    o5 = DebitAccountAgiosHistory(account_id=1,
-                                  agios_check_date=datetime.strptime("01-07-2019", "%d-%m-%Y"),
-                                  balance_attime=-300.0,
-                                  cashier_facility_attime=200.0)
-
-    o2 = DebitAccountAgiosHistory(account_id=3,
-                                  agios_check_date=datetime.strptime("01-03-2019", "%d-%m-%Y"),
-                                  balance_attime=-300.0,
-                                  cashier_facility_attime=200.0)
-
-    o3 = DebitAccountAgiosHistory(account_id=5,
-                                  agios_check_date=datetime.strptime("01-03-2019", "%d-%m-%Y"),
-                                  balance_attime=-300.0,
-                                  cashier_facility_attime=200.0)

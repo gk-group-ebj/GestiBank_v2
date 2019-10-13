@@ -38,3 +38,83 @@ t = TransactionHistory(operation_date=date_jour,
                        type=typeTransaction.DEBIT_AGIOS
                        )
 store_data(t)
+
+
+######################testBrice################################
+from webapp.bdd.models.utils import store_data
+from datetime import datetime, timedelta
+from webapp.bdd.models.transactions_history import typeTransaction
+
+
+dc1 = DebitAccount(account_number=201, client_id=8, balance=-200)
+dc2 = DebitAccount(account_number=202, client_id=9, balance=-200)
+pc3 = PaidAccount(account_number=301, client_id=9, balance=300)
+pc4 = PaidAccount(account_number=302, client_id=7, balance=200)
+store_data(dc1, dc2, pc3, pc4)
+
+th1=TransactionHistory(operation_date=datetime.strptime("1990-01-01", "%Y-%m-%d"), account_id=1,
+type=typeTransaction.DEBIT, operation_amount=100.0)
+th2=TransactionHistory(operation_date=datetime.strptime("1991-01-01", "%Y-%m-%d"), account_id=2,
+type=typeTransaction.CREDIT, operation_amount=50.0)
+th3=TransactionHistory(operation_date=datetime.strptime("1992-01-01", "%Y-%m-%d"), account_id=3,
+type=typeTransaction.DEBIT, operation_amount=100.0)
+th4=TransactionHistory(operation_date=datetime.strptime("1992-01-01", "%Y-%m-%d"), account_id=4,
+type=typeTransaction.CREDIT, operation_amount=200.0)
+store_data(th1, th2, th3, th4)
+
+################################################"
+id = db.Column(db.Integer, primary_key=True)  # Integer
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id'), index=True)
+    agios_check_date = db.Column(db.DateTime, default=datetime.utcnow(), index=True)  # Varchar(20)
+    cashier_facility_attime = db.Column(db.Float(12, 2), default=0)
+    balance_attime = db.Column(db.Float(12, 2), default=0)
+    daily_underthreshold = db.Column("amount_under_threshold", db.Float(12, 2), default=0)
+
+ah1=DebitAccountAgiosHistory(account_id=1, agios_check_date=datetime.strptime("2000-01-01", "%Y-%m-%d"),
+cashier_facility_attime=100.0, balance_attime=-200.0)
+ah1.calculate_daily_underthreshold()
+
+ah11=DebitAccountAgiosHistory(account_id=1, agios_check_date=datetime.strptime("2019-04-01", "%Y-%m-%d"),
+cashier_facility_attime=100.0, balance_attime=-200.0)
+ah11.calculate_daily_underthreshold()
+
+ah12=DebitAccountAgiosHistory(account_id=1, agios_check_date=datetime.strptime("2019-05-01", "%Y-%m-%d"),
+cashier_facility_attime=100.0, balance_attime=-50.0)
+ah12.calculate_daily_underthreshold()
+
+ah13=DebitAccountAgiosHistory(account_id=1, agios_check_date=datetime.strptime("2019-06-01", "%Y-%m-%d"),
+cashier_facility_attime=200.0, balance_attime=-200.0)
+ah13.calculate_daily_underthreshold()
+
+ah14=DebitAccountAgiosHistory(account_id=1, agios_check_date=datetime.strptime("2019-07-01", "%Y-%m-%d"),
+cashier_facility_attime=200.0, balance_attime=-1000.0)
+ah14.calculate_daily_underthreshold()
+
+ah2=DebitAccountAgiosHistory(account_id=2, agios_check_date=datetime.strptime("2002-01-01", "%Y-%m-%d"),
+cashier_facility_attime=100.0, balance_attime=-200.0)
+ah2.calculate_daily_underthreshold()
+
+ah21=DebitAccountAgiosHistory(account_id=2, agios_check_date=datetime.strptime("2019-04-01", "%Y-%m-%d"),
+cashier_facility_attime=100.0, balance_attime=-1000.0)
+ah21.calculate_daily_underthreshold()
+
+ah22=DebitAccountAgiosHistory(account_id=2, agios_check_date=datetime.strptime("2019-05-01", "%Y-%m-%d"),
+cashier_facility_attime=100.0, balance_attime=-50.0)
+ah22.calculate_daily_underthreshold()
+
+ah23=DebitAccountAgiosHistory(account_id=2, agios_check_date=datetime.strptime("2019-06-01", "%Y-%m-%d"),
+cashier_facility_attime=200.0, balance_attime=-200.0)
+ah23.calculate_daily_underthreshold()
+
+ah24=DebitAccountAgiosHistory(account_id=2, agios_check_date=datetime.strptime("2019-07-01", "%Y-%m-%d"),
+cashier_facility_attime=100.0, balance_attime=-10000.0)
+ah24.calculate_daily_underthreshold()
+
+from webapp.bdd.models.utils import store_data
+from datetime import datetime, timedelta
+from webapp.bdd.models.transactions_history import typeTransaction
+DebitAccountAgiosHistory.update_trimester_agios(datetime.strptime("2019-07-01", "%Y-%m-%d"))
+
+th5=TransactionHistory(operation_date=datetime.strptime("1991-01-01", "%Y-%m-%d"), account_id=2,
+type=typeTransaction.CREDIT, operation_amount=50.0, balance_attime=-169.0)
+store_data(th5)

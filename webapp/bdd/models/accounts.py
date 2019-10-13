@@ -32,7 +32,7 @@ class Account(db.Model, PaginatedAPIMixin):
     iban = db.Column(db.String(20), unique=True)  # Varchar(20)
     balance = db.Column(db.Float(12, 2), default=0)
     _cashier_facility = db.Column("cashier_facility", db.Float(12, 2), default=0)
-    _paid_threshold = db.Column("paid_threshold", db.Float(12, 2), default=0)
+    _benefits_threshold = db.Column("paid_threshold", db.Float(12, 2), default=0)
 
     __mapper_args__ = {
         'polymorphic_identity': 'CURRENT_ACCOUNT',
@@ -52,8 +52,8 @@ class Account(db.Model, PaginatedAPIMixin):
         if self._cashier_facility is None:
             self._cashier_facility = 0.0
 
-        if self._paid_threshold is None:
-            self._paid_threshold = 0.0
+        if self._benefits_threshold is None:
+            self._benefits_threshold = 0.0
 
     @hybrid_property
     def cashier_facility(self):
@@ -70,15 +70,15 @@ class Account(db.Model, PaginatedAPIMixin):
             )
 
     @hybrid_property
-    def paid_threshold(self):
-        return self._paid_threshold
+    def benefits_threshold(self):
+        return self._benefits_threshold
 
-    @paid_threshold.setter
-    def paid_threshold(self, p_paid):
+    @benefits_threshold.setter
+    def benefits_threshold(self, p_paid):
         if p_paid >= 0.0:
-            self._paid_threshold = float(p_paid)
+            self._benefits_threshold = float(p_paid)
         else:
-            raise NegativePaidThresholdException(
+            raise NegativeBenefitThresholdException(
                 "FAILED: le seuil de rémunération pour le compte {} est négatif. Entrez un montant positif".format(
                     self.account_number)
             )
@@ -86,7 +86,8 @@ class Account(db.Model, PaginatedAPIMixin):
     # Methods
     def credit(self, p_amount):
         if p_amount >= 0.0:
-            self.balance = self.balance + float(p_amount)
+            self.balance = float(self.balance) + float(p_amount)
+            return self.balance
         else:
             raise NegativeOperationException(
                 "FAILED: le montant impliqué dans l'opération sur le compte {} est négatif".format(self.account_number)
@@ -95,9 +96,10 @@ class Account(db.Model, PaginatedAPIMixin):
     def debit(self, p_amount):
         if p_amount >= 0.0:
             try:
-                new_balance = (self.balance + self.cashier_facility) - float(p_amount)
-                if new_balance >= 0.0:
-                    self.balance = new_balance - self.cashier_facility
+                new_balance = (float(self.balance) + float(self.cashier_facility)) - float(p_amount)
+                if new_balance >= 0.0 or self.type == typeAccount.DEBIT_ACCOUNT:
+                    self.balance = float(new_balance) - float(self.cashier_facility)
+                    return self.balance
                 else:
                     raise NegativeBalanceException(
                         "FAILED : le seuil de découvert du compte {} est dépassé. Opération refusée.".format(
@@ -138,14 +140,14 @@ class Account(db.Model, PaginatedAPIMixin):
                                                       self.type.value,
                                                       self.balance,
                                                       self.cashier_facility,
-                                                      self.paid_threshold)
+                                                      self.benefits_threshold)
         else:
             return "<{}[{}:{}:{:-.2f}:{}:{}]>".format(self.__class__.__name__,
                                                       self.account_number,
                                                       self.type.value,
                                                       self.balance,
                                                       self.cashier_facility,
-                                                      self.paid_threshold)
+                                                      self.benefits_threshold)
 
     def __repr__(self):
         return self.__str__()
@@ -171,7 +173,6 @@ class PaidAccount(Account):
     def __init__(self, **kwargs):
         super(PaidAccount, self).__init__(**kwargs)
         self.type = typeAccount.PAID_ACCOUNT.name
-        # self.benefit = 0.0
 
 
 class DebitAccount(Account):
@@ -201,7 +202,7 @@ class NegativeCashierFacilityException(Exception):
         self.__message = p_message
 
 
-class NegativePaidThresholdException(Exception):
+class NegativeBenefitThresholdException(Exception):
     def __init__(self, p_message):
         self.__message = p_message
 
