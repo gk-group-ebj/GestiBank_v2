@@ -1,5 +1,50 @@
-{% extends "barre_admin.html" %}
+{% extends "barre.html" %}
 
-{% block content %}
-    <p>{{_("List of requests")}}</p>
-{% endblock %}
+{% block app_content_center %}
+    <h1>{{_("List of requests")}}</h1>
+        <table class="table table-striped ">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">{{_('Request Id')}}</th>
+                    <th scope="col">{{_('Manager id')}}</th>
+                    <th scope="col">{{_('Lastname')}}</th>
+                    <th scope="col">{{_('Firstname')}}</th>
+                    <th scope="col">{{_('Username')}}</th>
+                    <th scope="col">{{_('Email')}}</th>
+                    <th scope="col">{{_('Phone')}}</th>
+                    <th scope="col">{{_('Id card')}}</th>
+                    <th scope="col">{{_('Proof of address')}}</th>
+                    <th scope="col">{{_('Salary')}}</th>
+                    <th scope="col">{{_('Request date')}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in requests %}
+                <tr>
+                    <form class="flag-icon" action="{{ url_for('main.set_manager') }}" method="POST">
+                        <th scope="row" value="{{ r.id }}" name="request_id">{{ r.id }}</th>
+                        <td>
+                            <select title="Manager" name="manager_id" onchange="this.form.submit()">
+                                <option> 0 </option>
+                                {% for manager in list_manager %}
+                                    <option value="{{ manager[0] }}">
+                                        {{ manager[1] }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </form>
+                    <td>{{ r.lastname }}</td>
+                    <td>{{ r.firstname }}</td>
+                    <td>{{ r.username }}</td>
+                    <td>{{ r.email }}</td>
+                    <td>{{ r.phone }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ r.request_date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+{%- endblock app_content_center %}

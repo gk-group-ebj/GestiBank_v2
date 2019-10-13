@@ -1,4 +1,4 @@
-from flask import Flask, current_app, request, session
+from flask import Flask, current_app, request, session, render_template, redirect
 
 from webapp.bdd.models.account_agios_history import DebitAccountAgiosHistory
 from webapp.bdd.models.account_paid_history import PaidAccountBenefitHistory
@@ -31,10 +31,11 @@ def create_app(p_config=Config):
 
         mail.init_app(app_return)
 
-        app_return.register_blueprint(auth_bp)
         app_return.register_blueprint(main_bp)
+        app_return.register_blueprint(auth_bp)
         app_return.register_blueprint(api_bp)
 
+        # Gestion dans toutes les pages de l'application
         @app_return.context_processor
         def inject_conf_var():
             return dict(
@@ -42,8 +43,20 @@ def create_app(p_config=Config):
                 AVAILABLE_LANGUAGES=current_app.config['LANGUAGES'],
                 CURRENT_LANGUAGE=session.get('language',
                                              request.accept_languages.best_match(
-                                            current_app.config['LANGUAGES'].keys()))
+                                                 current_app.config['LANGUAGES'].keys()))
             )
+
+        # Redirection de toutes les erreurs vers erreur.html
+        @app_return.errorhandler(Exception)
+        def http_error_handler(e):
+            if request.endpoint:
+                return render_template('main/error.html', err=e, next=request.endpoint)
+            else:
+                return render_template('main/error.html', err=e)
+
+        from werkzeug.exceptions import default_exceptions
+        for ex in default_exceptions:
+            app_return.register_error_handler(ex, http_error_handler)
 
         @app_return.shell_context_processor
         def inject_conf_var():
@@ -56,6 +69,10 @@ def create_app(p_config=Config):
                     "OpenAccountRequest": OpenAccountRequest
                     }
 
+        # Gestion de log
+        # handler = RotatingFileHandler('logfile.log', maxBytes=10000, backupCount=1)
+        # handler.setLevel(logging.INFO)
+        # app_return.logger.addHandler(handler)
     return app_return
 
 

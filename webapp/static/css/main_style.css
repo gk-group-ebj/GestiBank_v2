@@ -5,3 +5,7 @@
 .login_title {
     margin: 50px 0px;
 }
+
+.errors {
+    color: red;
+}

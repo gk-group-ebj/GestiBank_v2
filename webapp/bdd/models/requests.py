@@ -37,10 +37,10 @@ class OpenAccountRequest(db.Model, PaginatedAPIMixin):
         return data
 
     def __str__(self):
-        return "<{}[{}:{}:{:+.2f}]>".format(self.__class__.__name__,
+        return "<{}[{}:{}:{}]>".format(self.__class__.__name__,
                                             self.id,
-                                            self.request_date.strftime("%d-%m-%Y"),
-                                            self.balance)
+                                            self.username,
+                                            self.request_date.strftime("%d-%m-%Y"))
 
     def __repr__(self):
         return self.__str__()

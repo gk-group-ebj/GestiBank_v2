@@ -1,5 +1,37 @@
 {% extends "barre.html" %}
 
 {% block content %}
-    <h1>{{_('Event page')}}</h1>
-{% endblock %}
+
+<div id="xecurrencywidget">
+    Convertisseur
+</div>
+<script>var xeCurrencyWidget = {"domain":"mysite.fr","language":"fr","size":"normal"};</script>
+<script src="https://www.xe.com/syndication/currencyconverterwidget.js"></script>
+
+<section >
+    <!-- carte meteo -->
+    <div id="carte_9a2d7bcf5e21bae3b9dceeff52725c3b">
+        <a href="http://www.mymeteo.info/r/france_xt" title="découvrir France"><img src="https://services.my-meteo.com/assets_webmaster/cartes/c.gif" alt="découvrir France" height="1" width="1" /></a>
+        <script type="text/javascript">
+        (function() {
+           var my = document.createElement("script"); my.type = "text/javascript"; my.async = true;
+           my.src = "https://services.my-meteo.com/cartes/js?pays=france&periode=24&x=450&y=430&d=0&id=9a2d7bcf5e21bae3b9dceeff52725c3b";
+           var z = document.getElementsByTagName("script")[0]; z.parentNode.insertBefore(my, z);
+        })();
+        </script>
+    </div>
+    <!-- carte meteo -->
+    <div id="carte_a6d90a31adb75ba41fa416c294007552">
+        <a href="http://www.mymeteo.info/r/france_yt" title="climat France">climat France</a>
+        <script type="text/javascript">
+        (function() {
+           var my = document.createElement("script"); my.type = "text/javascript"; my.async = true;
+           my.src = "https://services.my-meteo.com/cartes/js?pays=france&periode=48&x=450&y=430&d=0&id=a6d90a31adb75ba41fa416c294007552";
+           var z = document.getElementsByTagName("script")[0]; z.parentNode.insertBefore(my, z);
+        })();
+        </script>
+    </div>
+</section>
+
+<!-- carte meteo -->
+{%- endblock content %}

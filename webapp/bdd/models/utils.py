@@ -1,8 +1,7 @@
 # coding: utf-8
 from collections import Iterable
 
-import jwt
-from flask import url_for, current_app
+from flask import url_for
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -91,3 +90,30 @@ def count(p_req):
 # Fonction same_as permet d'initialiser un default sur une colonne par rapport à une autre colonnes
 def same_as(col):
     return lambda ctx: ctx.current_parameters.get(col)
+
+"""
+
+def login_required(role="ANY"):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        if current_user is not None:
+            if not current_user.is_authenticated:
+                return login.unauthorized()
+            if (current_user.type != role) and (role != "ANY"):
+                return login.unauthorized()
+        return func(*args, **kwargs)
+
+    return decorated_function
+
+
+def role_required(role_name):
+    @wraps(func)
+    def authorize(*args, **kwargs):
+        if current_user is not None:
+            if not (current_user.type == role_name):
+                abort(401)  # not authorized
+        return func(*args, **kwargs)
+
+    return authorize
+
+"""
