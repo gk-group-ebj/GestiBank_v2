@@ -1,29 +1,44 @@
 {% extends 'bootstrap/base.html' %}
+{% block title %} Gestibank {% endblock title %}
+{%- block metas %}
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{%- endblock metas %}
 {% block styles %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main_style.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/clean-blog.css') }}" />
-{% endblock %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/menu_gauche.css') }}" />
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+{%- endblock styles %}
+{% block scripts %}
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+{%- endblock scripts %}
 {% block navbar %}
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
+             <span></span>
             <a class="navbar-brand" href="{{ url_for('main.index')}}">GestiBank</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     {% if current_user.type == "client" %}
                         <li class="nav-item">
-                            <a href="{{ url_for('main.index_client') }}">{{_('My account')}}</a>
+                            <a href="{{ url_for('main.index_client') }}">{{_('Home')}}</a>
                         </li>
                     {% elif current_user.type == "manager" %}
                         <li class="nav-item">
-                            <a href="{{ url_for('main.index_manager') }}">{{_('My account')}}</a>
+                            <a href="{{ url_for('main.index_manager') }}">{{_('Home')}}</a>
                         </li>
                     {% elif current_user.type == "admin" %}
                         <li class="nav-item">
-                            <a href="{{ url_for('main.index_admin') }}">{{_('My account')}}</a>
+                            <a href="{{ url_for('main.index_admin') }}">{{_('Home')}}</a>
                         </li>
                     {% endif %}
                     <li class="nav-item">
@@ -31,15 +46,6 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('auth.register_client')}}">{{_('Registration')}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href=#>{{_('Employees')}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href=#">{{_('Requests')}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href=#>{{_('Account')}}</a>
                     </li>
                     {% if current_user.is_anonymous %}
                         <li class="nav-item">
@@ -67,10 +73,49 @@
             </div>
         </div>
     </nav>
-
-{% endblock %}
+{%- endblock navbar %}
 {% block content %}
-        <section>
+    <section>
+        {% block menu_gauche %}
+        <div class="nav-side-menu">
+            <div class="brand">{{ current_user.username }}</div>
+            <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+                <div class="menu-list">
+                    <ul id="menu-content" class="menu-content collapse out">
+                        <li>
+                            <a href="#"><i class="fa fa-dashboard fa-lg"></i> Dashboard </a>
+                        </li>
+                        {% if current_user.type == "admin" %}
+                            <li  data-toggle="collapse" data-target="#requests" class="collapsed">
+                              <a href="{{ url_for('main.requests') }} "><i class="fa fa-envelope fa-lg"></i> {{ _('Requests') }} </a>
+                            </li>
+                            <li data-toggle="collapse" data-target="#service" class="collapsed">
+                                <a href="#"><i class="fa fa-plus-square fa-lg"></i> {{ _('Create manager') }} </a>
+                            </li>
+                            <li data-toggle="collapse" data-target="#new" class="collapsed">
+                                <a href="#"><i class="fa fa-plus-square fa-lg"></i> {{ _('Create admin') }} </a>
+                            </li>
+                            <li  data-toggle="collapse" data-target="#requests" class="collapsed">
+                                <a href="#"><i class="fa fa-user fa-lg"></i> {{ _('My profil') }} </a>
+                            </li>
+                        {% elif current_user.type == "manager" %}
+                            <li  data-toggle="collapse" data-target="#requests" class="collapsed">
+                                <a href="#"><i class="fa fa-user fa-lg"></i> {{ _('My clients') }} </a>
+                            </li>
+                            <li  data-toggle="collapse" data-target="#requests" class="collapsed">
+                              <a href="{{ url_for('main.requests_by_manager') }} "><i class="fa fa-envelope fa-lg"></i> {{ _('Requests') }} </a>
+                            </li>
+                            <li  data-toggle="collapse" data-target="#requests" class="collapsed">
+                                <a href="#"><i class="fa fa-user fa-lg"></i> {{ _('My profil') }} </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+             </div>
+        </div>
+        {%- endblock menu_gauche %}
+        {% block content_center %}
+         <!-- Instanciation du block content qui pourra être réutilisé dans d'autres fichiers -->
+            {% block error_messages %}
             <div class="errors_message">
                 {% with messages = get_flashed_messages() %}
                     {% if messages %}
@@ -82,7 +127,17 @@
                     {% endif %}
                 {% endwith %}
             </div>
-            <!-- Instanciation du block content qui pourra être réutilisé dans d'autres fichiers -->
-            {% block app_content %}{% endblock%}
-        </section>
-{% endblock%}
+            {%- endblock error_messages %}
+            {% block app_content %}
+            <section class="login_block row justify-content-center">
+                <h1 class="login_title align-self-center">{{ title_content }}</h1>
+                <div class="col-md-4 align-self-center">
+                    {% block app_content_center %}
+                    {{ wtf.quick_form(form, enctype="multipart/form-data") }}
+                    {%- endblock app_content_center %}
+                </div>
+            </section>
+            {%- endblock app_content %}
+        {%- endblock content_center %}
+    </section>
+{%- endblock content %}

@@ -15,9 +15,9 @@ class OpenAccountRequest(db.Model, PaginatedAPIMixin):
     username = db.Column(db.String(64), nullable=False, unique=True)
     email = db.Column(db.String(128), nullable=False, unique=True)
     phone = db.Column(db.String(20), nullable=False)
-    id_card = db.Column(db.LargeBinary(length=(2**32)-1), nullable=False)
-    proof_of_address = db.Column(db.LargeBinary(length=(2**32)-1), nullable=False)
-    salary = db.Column(db.LargeBinary(length=(2**32)-1), nullable=False)
+    id_card = db.Column(db.LargeBinary(length=(2**32)-1))
+    proof_of_address = db.Column(db.LargeBinary(length=(2**32)-1))
+    salary = db.Column(db.LargeBinary(length=(2**32)-1))
     request_date = db.Column(db.DateTime, default=datetime.utcnow())
     manager_id = db.Column(db.Integer, default=0)
 
@@ -37,10 +37,10 @@ class OpenAccountRequest(db.Model, PaginatedAPIMixin):
         return data
 
     def __str__(self):
-        return "<{}[{}:{}:{:+.2f}]>".format(self.__class__.__name__,
+        return "<{}[{}:{}:{}]>".format(self.__class__.__name__,
                                             self.id,
-                                            self.request_date.strftime("%d-%m-%Y"),
-                                            self.balance)
+                                            self.username,
+                                            self.request_date.strftime("%d-%m-%Y"))
 
     def __repr__(self):
         return self.__str__()

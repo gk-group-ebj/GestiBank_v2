@@ -51,9 +51,9 @@ class ClientRegistrationForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     email = StringField(_l('Email'), validators=[DataRequired(), Email()])
     phone = StringField(_l('Phone'), validators=[DataRequired()])
-    id_card = FileField(_l('ID card'), validators=[DataRequired()])
-    proof_of_address = FileField(_l('Proof of address'), validators=[DataRequired()])
-    salary = FileField(_l('Salary'), validators=[DataRequired()])
+    id_card = FileField(_l('ID card'))
+    proof_of_address = FileField(_l('Proof of address'))
+    salary = FileField(_l('Salary'))
 
 
     submit = SubmitField(_l('Register'))

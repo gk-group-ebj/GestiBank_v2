@@ -95,12 +95,12 @@ class User(db.Model, PaginatedAPIMixin, UserMixin):
 
     def __str__(self):
         return "<{}[{}:{}:{}:{}]>".format(
-                                    self.__class__.__name__,
-                                    self.username,
-                                    self.email,
-                                    self.lastname,
-                                    self.firstname
-                                )
+            self.__class__.__name__,
+            self.username,
+            self.email,
+            self.lastname,
+            self.firstname
+        )
 
     def __repr__(self):
         return self.__str__()
@@ -219,6 +219,11 @@ def verify_reset_password_token(token):
             return user
         else:
             print('Token deactivate')
+
+
+class UserNotFoundException(Exception):
+    def __init__(self, p_message):
+        self.__message = p_message
 
 
 if __name__ == "__main__":

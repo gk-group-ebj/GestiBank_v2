@@ -3,7 +3,7 @@ from webapp.bdd.models.utils import store_data
 
 # Users
 
-a1 = Admin(username="admin1", email="admin1@gestibank.fr")
+a1 = Admin(username="admin1", email="admin1@gestibank.fr", password_hash="a1")
 a2 = Admin(username="admin2", email="admin2@gestibank.fr")
 m1 = Manager(username="manager1", email="manager1@gestibank.fr", mle=100)
 m2 = Manager(username="manager2", email="manager2@gestibank.fr", mle=101)
