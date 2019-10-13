@@ -27,19 +27,19 @@
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('main.event')}}">{{_('Event')}}</a>
+                        <a class="nav-link" href="{{url_for('main.event')}}">{{_('Event')}}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.register_client')}}">{{_('Registration')}}</a>
+                        <a class="nav-link" href="{{url_for('auth.register_client')}}">{{_('Registration')}}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href=#>{{_('Employees')}}</a>
+                        <a class="nav-link" href="#">{{_('Employees')}}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href=#">{{_('Requests')}}</a>
+                        <a class="nav-link" href="{{url_for('main.requests')}}">{{_('List of requests')}}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href=#>{{_('Account')}}</a>
+                        <a class="nav-link" href="#">{{_('Account')}}</a>
                     </li>
                     {% if current_user.is_anonymous %}
                         <li class="nav-item">
@@ -47,7 +47,7 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('auth.logout') }}">{{_('Logout')}}</a>
+                            <a class="nav-link" href="{{url_for('auth.logout') }}">{{_('Logout')}}</a>
                         </li>
                     {% endif %}
                 </ul>

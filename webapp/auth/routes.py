@@ -13,8 +13,8 @@ from webapp.bdd.models.utils import store_data, commit_data
 from webapp.extensions import db
 
 
-@bp.route('/login/admin', methods=['GET', 'POST'])
-@bp.route('/login/manager', methods=['GET', 'POST'])
+@bp.route('/admin/login', methods=['GET', 'POST'])
+@bp.route('/manager/login', methods=['GET', 'POST'])
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
