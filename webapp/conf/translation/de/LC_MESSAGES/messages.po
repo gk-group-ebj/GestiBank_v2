@@ -1,0 +1,220 @@
+# German translations for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-10-14 05:02+0200\n"
+"PO-Revision-Date: 2019-10-14 04:21+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: webapp/auth/forms.py:31
+msgid "Reinit your password"
+msgstr ""
+
+#: webapp/auth/routes.py:27 webapp/auth/routes.py:56
+#, python-format
+msgid "ERROR : user with username %(username)s is unknown."
+msgstr ""
+
+#: webapp/auth/routes.py:34 webapp/auth/routes.py:37
+#, python-format
+msgid "ERROR : password for user %(username)s is invalid."
+msgstr ""
+
+#: webapp/auth/routes.py:58 webapp/templates/barre.html:52
+msgid "Login"
+msgstr "Verbindung"
+
+#: webapp/auth/routes.py:81
+msgid "Register"
+msgstr ""
+
+#: webapp/auth/routes.py:88
+msgid "Register Manager"
+msgstr ""
+
+#: webapp/auth/routes.py:101 webapp/auth/routes.py:110
+#, python-format
+msgid "ERROR : user with email %(email)s is unknown."
+msgstr ""
+
+#: webapp/auth/routes.py:107
+#, python-format
+msgid ""
+"%(email)s ==> Un email vous a été envoyez pour réinitialiser votre mot de"
+" passe."
+msgstr ""
+
+#: webapp/auth/routes.py:112
+#: webapp/templates/auth/email/email_reset_password.html:7
+msgid "Reset your password"
+msgstr ""
+
+#: webapp/auth/routes.py:130
+#, python-format
+msgid "%(username)s, votre mot de passe a été réinitialisé."
+msgstr ""
+
+#: webapp/auth/routes.py:136 webapp/auth/routes.py:141
+#, python-format
+msgid ""
+"%(username)s, vous avez saisi le même mot de passe que les %(nb_pwd)s "
+"précédent(s). Veuillez modifier votre mot de passe."
+msgstr ""
+
+#: webapp/auth/routes.py:144
+msgid "Reset Password"
+msgstr ""
+
+#: webapp/templates/barre.html:33 webapp/templates/barre.html:37
+#: webapp/templates/barre.html:41
+msgid "Home"
+msgstr "Wilkomen"
+
+#: webapp/templates/barre.html:45
+msgid "Event"
+msgstr "Veranstaltung"
+
+#: webapp/templates/barre.html:48
+msgid "Registration"
+msgstr ""
+
+#: webapp/templates/barre.html:56
+msgid "Logout"
+msgstr ""
+
+#: webapp/templates/barre.html:90 webapp/templates/barre.html:112
+msgid "Requests"
+msgstr ""
+
+#: webapp/templates/barre.html:93
+msgid "Create manager"
+msgstr ""
+
+#: webapp/templates/barre.html:96
+msgid "Create admin"
+msgstr ""
+
+#: webapp/templates/barre.html:99 webapp/templates/barre.html:115
+msgid "My profil"
+msgstr ""
+
+#: webapp/templates/barre.html:102
+msgid "Agios journalier"
+msgstr ""
+
+#: webapp/templates/barre.html:105
+msgid "Agios Trim"
+msgstr ""
+
+#: webapp/templates/barre.html:109
+msgid "My clients"
+msgstr ""
+
+#: webapp/templates/admin/employees.html:4
+msgid "List of banks' employees"
+msgstr ""
+
+#: webapp/templates/admin/index.html:4
+msgid "Bienvenue"
+msgstr "Wilkomen"
+
+#: webapp/templates/admin/requests.html:4
+msgid "List of requests"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:8
+msgid "Request Id"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:9
+msgid "Manager id"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:10
+msgid "Lastname"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:11
+msgid "Firstname"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:12
+msgid "Username"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:13
+msgid "Email"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:14
+msgid "Phone"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:15
+msgid "Id card"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:16
+msgid "Proof of address"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:17
+msgid "Salary"
+msgstr ""
+
+#: webapp/templates/admin/requests.html:18
+msgid "Request date"
+msgstr ""
+
+#: webapp/templates/auth/login.html:8
+msgid "Forgotten password ?"
+msgstr ""
+
+#: webapp/templates/auth/email/email_reset_password.html:4
+#, python-format
+msgid "Cher %(username)s"
+msgstr ""
+
+#: webapp/templates/auth/email/email_reset_password.html:6
+msgid ""
+"Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien "
+"suivant"
+msgstr ""
+
+#: webapp/templates/auth/email/email_reset_password.html:9
+msgid "Cordialement,"
+msgstr ""
+
+#: webapp/templates/auth/email/email_reset_password.html:10
+msgid "L'équipe Gestibank"
+msgstr ""
+
+#: webapp/templates/client/account.html:4
+msgid "Your accounts"
+msgstr ""
+
+#: webapp/templates/main/error.html:42
+msgid "Return"
+msgstr ""
+
+#: webapp/templates/main/error.html:45 webapp/templates/main/error.html:47
+#: webapp/templates/main/error.html:49 webapp/templates/main/error.html:51
+msgid "Go to Home page"
+msgstr ""
+
+#: webapp/templates/manager/clients.html:4
+msgid "List of clients"
+msgstr ""
+

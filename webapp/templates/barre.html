@@ -98,12 +98,18 @@
                             <li  data-toggle="collapse" data-target="#requests" class="collapsed">
                                 <a href="#"><i class="fa fa-user fa-lg"></i> {{ _('My profil') }} </a>
                             </li>
+                            <li  data-toggle="collapse" data-target="#requests" class="collapsed">
+                                <a href="{{ url_for('main.jour_agios') }} "><i class="fa fa-user fa-lg"></i> {{ _('Agios journalier') }} </a>
+                            </li>
+                            <li  data-toggle="collapse" data-target="#requests" class="collapsed">
+                                <a href="{{ url_for('main.trim_agios') }} "><i class="fa fa-user fa-lg"></i> {{ _('Agios Trim') }} </a>
+                            </li>
                         {% elif current_user.type == "manager" %}
                             <li  data-toggle="collapse" data-target="#requests" class="collapsed">
                                 <a href="#"><i class="fa fa-user fa-lg"></i> {{ _('My clients') }} </a>
                             </li>
                             <li  data-toggle="collapse" data-target="#requests" class="collapsed">
-                              <a href="{{ url_for('main.requests_by_manager') }} "><i class="fa fa-envelope fa-lg"></i> {{ _('Requests') }} </a>
+                              <a href="{{ url_for('main.requests_by_manager', id=current_user.id) }} "><i class="fa fa-envelope fa-lg"></i> {{ _('Requests') }} </a>
                             </li>
                             <li  data-toggle="collapse" data-target="#requests" class="collapsed">
                                 <a href="#"><i class="fa fa-user fa-lg"></i> {{ _('My profil') }} </a>

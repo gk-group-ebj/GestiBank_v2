@@ -1,6 +1,7 @@
 # coding: utf-8
 from datetime import datetime
 from flask import url_for
+from sqlalchemy.sql.elements import Null
 
 from webapp.bdd.models.utils import PaginatedAPIMixin
 from webapp.extensions import db
@@ -15,9 +16,9 @@ class OpenAccountRequest(db.Model, PaginatedAPIMixin):
     username = db.Column(db.String(64), nullable=False, unique=True)
     email = db.Column(db.String(128), nullable=False, unique=True)
     phone = db.Column(db.String(20), nullable=False)
-    id_card = db.Column(db.LargeBinary(length=(2**32)-1))
-    proof_of_address = db.Column(db.LargeBinary(length=(2**32)-1))
-    salary = db.Column(db.LargeBinary(length=(2**32)-1))
+    id_card = db.Column(db.String(128), default=Null)
+    proof_of_address = db.Column(db.String(128), default=Null)
+    salary = db.Column(db.String(128), default=Null)
     request_date = db.Column(db.DateTime, default=datetime.utcnow())
     manager_id = db.Column(db.Integer, default=0)
 

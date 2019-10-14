@@ -18,33 +18,55 @@
                     <th scope="col">{{_('Request date')}}</th>
                 </tr>
             </thead>
-            <tbody>
-                {% for r in requests %}
-                <tr>
-                    <form class="flag-icon" action="{{ url_for('main.set_manager', id=r.id) }}" method="POST">
+            {% if request.endpoint == 'main.requests' %}
+                <tbody>
+                    {% for r in requests %}
+                    <tr>
                         <th scope="row" value="{{ r.id }}" name="request_id">{{ r.id }}</th>
-                        <td>
-                            <select title="Manager" name="manager_id" onchange="this.form.submit()">
-                                <option> 0 </option>
-                                {% for manager in list_manager %}
-                                    <option value="{{ manager[0] }}">
-                                        {{ manager[1] }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </td>
+                        <form class="flag-icon" action="{{ url_for('main.set_manager', id=r.id) }}" method="POST">
+                            <td>
+                                <select title="Manager" name="manager_id" onchange="this.form.submit()">
+                                    <option> N/A </option>
+                                    {% for manager in list_manager %}
+                                        <option value="{{ manager[0] }}">
+                                            {{ manager[1] }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </form>
+                        <td>{{ r.lastname }}</td>
+                        <td>{{ r.firstname }}</td>
+                        <td>{{ r.username }}</td>
+                        <td>{{ r.email }}</td>
+                        <td>{{ r.phone }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{ r.request_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            {% elif request.endpoint == 'main.requests_by_manager' %}
+                <tbody>
+                    {% for r in requests %}
+                    <form class="flag-icon" action="{{ url_for('main.create_client') }}" method="POST">
+                        <tr>
+                            <th scope="row" value="{{ r.id }}" name="request_id">{{ r.id }}</th>
+                            <td>{{ r.lastname }}</td>
+                            <td>{{ r.firstname }}</td>
+                            <td>{{ r.username }}</td>
+                            <td>{{ r.email }}</td>
+                            <td>{{ r.phone }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>{{ r.request_date }}</td>
+                            <td><button type="button" onclick="this.form.submit()">Create</button></td>
+                        </tr>
                     </form>
-                    <td>{{ r.lastname }}</td>
-                    <td>{{ r.firstname }}</td>
-                    <td>{{ r.username }}</td>
-                    <td>{{ r.email }}</td>
-                    <td>{{ r.phone }}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td>{{ r.request_date }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
+                    {% endfor %}
+                </tbody>
+            {% endif %}
         </table>
 {%- endblock app_content_center %}

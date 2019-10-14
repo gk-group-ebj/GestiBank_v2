@@ -54,6 +54,6 @@ class Config(object):
     ADMINS_EMAIL = "admin@gestibank.com"
 
     # BABEL PARAM
-    BABEL_TRANSLATION_DIRECTORIES = path.realpath(path.join(BASEDIR, "..", "conf", "translations"))
+    BABEL_TRANSLATION_DIRECTORIES = path.realpath(path.join(BASEDIR, "..", "conf", "translation"))
     BABEL_DEFAULT_LOCALE = 'fr'
     LANGUAGES = dict(de="German", en="English", es="Spanish", fr="French")
